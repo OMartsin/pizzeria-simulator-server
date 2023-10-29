@@ -1,6 +1,7 @@
 package com.example.pizzeria.services;
 
 import com.example.pizzeria.config.DinerArrivalConfig;
+import com.example.pizzeria.dto.PizzeriaConfigInputDto;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Recipe;
@@ -25,5 +26,6 @@ public interface IPizzeriaConfigService {
     void setAvailableRecipes(List<Recipe> menu);
     void setCooksPerStage(Map<PizzaStage, Integer> cooksPerStage);
     void setPizzeriaConfig(PizzeriaConfig config);
+    PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto);
 
 }

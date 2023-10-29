@@ -105,6 +105,7 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
         pizzeriaConfig.setMenu(config.getMenu());
     }
 
+    @Override
     public PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) {
         return configMapper.toPizzeriaConfig(inputDto);
     }

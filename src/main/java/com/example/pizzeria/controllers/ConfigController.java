@@ -4,6 +4,7 @@ import com.example.pizzeria.dto.PizzeriaConfigInputDto;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Recipe;
+import com.example.pizzeria.services.IPizzeriaConfigService;
 import com.example.pizzeria.services.PizzeriaConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/config")
 public class ConfigController {
-    private final PizzeriaConfigService pizzeriaConfigService;
+    private final IPizzeriaConfigService pizzeriaConfigService;
 
-    public ConfigController(PizzeriaConfigService pizzeriaConfigService) {
+    public ConfigController(IPizzeriaConfigService pizzeriaConfigService) {
         this.pizzeriaConfigService = pizzeriaConfigService;
     }
 
