@@ -1,4 +1,9 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.services;
+
+import com.example.pizzeria.config.DinerArrivalConfig;
+import com.example.pizzeria.models.PizzaStage;
+import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.models.Recipe;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +24,5 @@ public interface IPizzeriaConfigService {
     void setMenu(Recipe[] menu);
     void setCooksPerStage(Map<PizzaStage, Integer> cooksPerStage);
     void setPizzeriaConfig(PizzeriaConfig config);
-
-
 
 }

@@ -1,5 +1,7 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.config;
 
+import com.example.pizzeria.models.PizzaStage;
+import com.example.pizzeria.models.Recipe;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

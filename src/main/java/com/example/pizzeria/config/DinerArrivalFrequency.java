@@ -1,4 +1,4 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.config;
 
 public enum DinerArrivalFrequency {
     High(1),
@@ -7,7 +7,7 @@ public enum DinerArrivalFrequency {
 
     public final int value;
 
-    private DinerArrivalFrequency(int value) {
+    DinerArrivalFrequency(int value) {
         this.value = value;
     }
 }

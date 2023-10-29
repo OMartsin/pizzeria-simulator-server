@@ -1,5 +1,8 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.controllers;
 
+import com.example.pizzeria.models.PizzaStage;
+import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.services.PizzeriaConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +34,4 @@ public class ConfigController {
         return  ResponseEntity.ok(pizzeriaConfigService.getPizzeriaConfig());
 
     }
-
-
 }

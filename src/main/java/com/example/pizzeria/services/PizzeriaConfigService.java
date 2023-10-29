@@ -1,5 +1,9 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.services;
 
+import com.example.pizzeria.config.DinerArrivalConfig;
+import com.example.pizzeria.models.PizzaStage;
+import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.models.Recipe;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -85,11 +89,11 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
     @Override
     public void setPizzeriaConfig(PizzeriaConfig config) {
         pizzeriaConfig.setSpecializedCooksMode(config.isSpecializedCooksMode());
+        pizzeriaConfig.setCookStageDurationMap(config.getCookStageDurationMap());
         pizzeriaConfig.setCooksPerStage(config.getCooksPerStage());
         pizzeriaConfig.setDinerArrivalConfig(config.getDinerArrivalConfig());
         pizzeriaConfig.setCashRegisterQuantity(config.getCashRegisterQuantity());
         pizzeriaConfig.setMenu(config.getMenu());
-        pizzeriaConfig.setCooksPerStage(config.getCooksPerStage());
     }
 
 

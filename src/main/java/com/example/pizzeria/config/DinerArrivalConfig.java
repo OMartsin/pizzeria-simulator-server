@@ -1,4 +1,4 @@
-package com.example.pizzeria.PizzeriaConfig;
+package com.example.pizzeria.config;
 
 import lombok.Getter;
 import lombok.Setter;
