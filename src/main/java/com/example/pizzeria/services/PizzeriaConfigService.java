@@ -1,6 +1,9 @@
 package com.example.pizzeria.services;
 
+import com.example.pizzeria.PizzaMenuReader;
+import com.example.pizzeria.PizzeriaConfigMapper;
 import com.example.pizzeria.config.DinerArrivalConfig;
+import com.example.pizzeria.dto.PizzeriaConfigInputDto;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Recipe;
@@ -14,7 +17,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PizzeriaConfigService implements IPizzeriaConfigService {
     private final PizzeriaConfig pizzeriaConfig;
-
+    private final PizzeriaConfigMapper configMapper;
+    private final PizzaMenuReader pizzaMenuReader;
     @Override
     public boolean getSpecializedCooksMode() {
         return pizzeriaConfig.isSpecializedCooksMode();
@@ -36,8 +40,13 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
     }
 
     @Override
-    public Recipe[] getMenu() {
+    public List<Recipe> getAvailableRecipes()    {
         return pizzeriaConfig.getMenu();
+    }
+
+    @Override
+    public List<Recipe> getMenu() {
+        return pizzaMenuReader.getAllRecipes();
     }
 
     @Override
@@ -77,7 +86,7 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
     }
 
     @Override
-    public void setMenu(Recipe[] menu) {
+    public void setAvailableRecipes(List<Recipe> menu) {
         pizzeriaConfig.setMenu(menu);
     }
 
@@ -96,6 +105,8 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
         pizzeriaConfig.setMenu(config.getMenu());
     }
 
-
+    public PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) {
+        return configMapper.toPizzeriaConfig(inputDto);
+    }
 
 }

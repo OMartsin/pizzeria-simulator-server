@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -18,9 +19,7 @@ public class PizzeriaConfig{
     private Map<PizzaStage, Integer> cookStageDurationMap;
     private DinerArrivalConfig dinerArrivalConfig;
     private int cashRegisterQuantity;
-    private Recipe[] menu;
+    private List<Recipe> menu;
     private Map<PizzaStage, Integer> cooksPerStage;
-
-
 
 }

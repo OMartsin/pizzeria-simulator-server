@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Recipe {
+    private int id;
     private String name;
     private List<String> toppings;
     public Recipe() {
