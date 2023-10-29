@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class PizzaMenuReader {
     private final List<Recipe> recipes;
-    private final static String filePath = "src/main/resources/pizza-menu.json";
+    private final static String filePath = Paths.get("src", "main",
+            "resources", "pizza-menu.json").toString();
 
     public PizzaMenuReader()  {
         ObjectMapper objectMapper = new ObjectMapper();
