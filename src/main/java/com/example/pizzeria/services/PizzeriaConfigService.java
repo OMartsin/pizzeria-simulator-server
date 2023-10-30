@@ -10,6 +10,7 @@ import com.example.pizzeria.models.Recipe;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
     }
 
     @Override
-    public List<Recipe> getMenu() {
+    public List<Recipe> getMenu() throws IOException {
         return pizzaMenuReader.getAllRecipes();
     }
 

@@ -6,6 +6,7 @@ import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Recipe;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public interface IPizzeriaConfigService {
     DinerArrivalConfig getDinerArrivalConfig();
     int getCashRegisterQuantity();
     List<Recipe> getAvailableRecipes();
-    List<Recipe> getMenu();
+    List<Recipe> getMenu() throws IOException;
     Map<PizzaStage, Integer> getCooksPerStage();
     PizzeriaConfig getPizzeriaConfig();
     List<PizzaStage> getPizzaStages();

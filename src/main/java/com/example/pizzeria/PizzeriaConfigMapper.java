@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,10 +18,10 @@ public interface PizzeriaConfigMapper {
     @Mapping(target = "menu", source = "menu")
     PizzeriaConfig toPizzeriaConfig(PizzeriaConfigInputDto inputDto);
 
-    default List<Recipe> mapMenu(List<Integer> menuIds) {
-        PizzaMenuReader menuReader;
-        menuReader = new PizzaMenuReader();
-        List<Recipe> allRecipes = menuReader.getAllRecipes();
+    default List<Recipe> mapMenu(List<Integer> menuIds) throws IOException {
+        PizzaMenuReader menuReader = new PizzaMenuReader();
+        List<Recipe> allRecipes;
+        allRecipes = menuReader.getAllRecipes();
 
         return allRecipes.stream()
                 .filter(recipe -> menuIds.contains(recipe.getId()))

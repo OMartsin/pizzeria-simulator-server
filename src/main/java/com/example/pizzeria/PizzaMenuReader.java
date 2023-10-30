@@ -13,24 +13,13 @@ import java.util.List;
 
 @Component
 public class PizzaMenuReader {
-    private final List<Recipe> recipes;
     private final static String filePath = Paths.get("src", "main",
             "resources", "pizza-menu.json").toString();
 
-    public PizzaMenuReader()  {
+    public List<Recipe> getAllRecipes() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Recipe> temp;
-        try {
-            temp = objectMapper.readValue(new File(filePath), new TypeReference<>() {
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-            temp = new ArrayList<>();
-        }
-        recipes = temp;
-    }
-
-    public List<Recipe> getAllRecipes() {
+        List<Recipe> recipes;
+        recipes = objectMapper.readValue(new File(filePath), new TypeReference<>() {});
         return recipes;
     }
 }
