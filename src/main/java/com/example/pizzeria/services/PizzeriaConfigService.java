@@ -1,0 +1,49 @@
+package com.example.pizzeria.services;
+
+import com.example.pizzeria.PizzaMenuReader;
+import com.example.pizzeria.PizzeriaConfigMapper;
+import com.example.pizzeria.dto.PizzeriaConfigInputDto;
+import com.example.pizzeria.models.PizzaStage;
+import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.models.Recipe;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PizzeriaConfigService implements IPizzeriaConfigService {
+    private final PizzeriaConfig pizzeriaConfig;
+    private final PizzeriaConfigMapper configMapper;
+    private final PizzaMenuReader pizzaMenuReader;
+    @Override
+    public List<Recipe> getMenu() throws IOException {
+        return pizzaMenuReader.getAllRecipes();
+    }
+    @Override
+    public PizzeriaConfig getPizzeriaConfig() {
+        return pizzeriaConfig;
+    }
+
+    @Override
+    public List<PizzaStage> getPizzaStages() {
+       return List.of(PizzaStage.values());
+    }
+
+    @Override
+    public void setPizzeriaConfig(PizzeriaConfig config) {
+        pizzeriaConfig.setSpecializedCooksMode(config.isSpecializedCooksMode());
+        pizzeriaConfig.setCookStageDurationMap(config.getCookStageDurationMap());
+        pizzeriaConfig.setCooksPerStage(config.getCooksPerStage());
+        pizzeriaConfig.setDinerArrivalConfig(config.getDinerArrivalConfig());
+        pizzeriaConfig.setCashRegisterQuantity(config.getCashRegisterQuantity());
+        pizzeriaConfig.setMenu(config.getMenu());
+    }
+
+    @Override
+    public PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) {
+        return configMapper.toPizzeriaConfig(inputDto);
+    }
+
+}
