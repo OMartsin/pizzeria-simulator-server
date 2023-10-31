@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class Simulation {
+public class SimulationService {
     private final DinersGenerator dinersGenerator;
     private boolean isRunning = false;
 

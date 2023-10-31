@@ -1,7 +1,7 @@
 package com.example.pizzeria.controllers;
 
 import com.example.pizzeria.Initializer;
-import com.example.pizzeria.Simulation;
+import com.example.pizzeria.SimulationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/simulation")
 public class SimulationController {
-    private final Simulation simulation;
+    private final SimulationService simulationService;
     private final Initializer initializer;
 
     @GetMapping("start")
     public ResponseEntity<Map<String, String>> start() throws IllegalStateException {
         initializer.init();
-        boolean started = simulation.start();
+        boolean started = simulationService.start();
 
         String responseMessage = "simulation " + (started ? "started" : "has already started");
         Map<String, String> response = new HashMap<>();
@@ -34,7 +34,7 @@ public class SimulationController {
 
     @GetMapping("pause")
     public ResponseEntity<Map<String, String>> pause() throws IllegalStateException {
-        boolean paused = simulation.pause();
+        boolean paused = simulationService.pause();
 
         String responseMessage = "simulation " + (paused ? "paused" : "is currently not running");
         Map<String, String> response = new HashMap<>();
