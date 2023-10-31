@@ -1,7 +1,7 @@
 package com.example.pizzeria.controllers;
 
 import com.example.pizzeria.Initializer;
-import com.example.pizzeria.services.SimulationService;
+import com.example.pizzeria.services.ISimulationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/simulation")
 public class SimulationController {
-    private final SimulationService simulationService;
+    private final ISimulationService simulationService;
     private final Initializer initializer;
 
     @GetMapping("start")
