@@ -21,7 +21,9 @@ public class DinersGenerator {
     public void start() throws IllegalStateException {
         checkConfigNotNull();
 
-        Runnable generateDiners = () -> System.out.println("New Diner");
+        Runnable generateDiners = () -> {
+          // logic for generating diners
+        };
         taskHandle = scheduler.scheduleAtFixedRate(generateDiners,
                 0,
                 dinerArrivalConfig.getFrequency().value,
