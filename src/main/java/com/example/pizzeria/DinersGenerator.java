@@ -18,7 +18,9 @@ public class DinersGenerator {
         this.dinerArrivalConfig = dinerArrivalConfig;
     }
 
-    public void start() {
+    public void start() throws IllegalStateException {
+        checkConfigNotNull();
+
         Runnable generateDiners = () -> System.out.println("New Diner");
         taskHandle = scheduler.scheduleAtFixedRate(generateDiners,
                 0,
@@ -27,8 +29,16 @@ public class DinersGenerator {
 
     }
 
-    public void pause() {
+    public void pause() throws IllegalStateException {
+        checkConfigNotNull();
+
         taskHandle.cancel(false);
+    }
+
+    private void checkConfigNotNull() throws IllegalStateException {
+        if (dinerArrivalConfig == null) {
+            throw new IllegalStateException("DinerArrivalConfig is not initialized");
+        }
     }
 
 }

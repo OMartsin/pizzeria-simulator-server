@@ -9,7 +9,7 @@ public class Simulation {
     private final DinersGenerator dinersGenerator;
     private boolean isRunning = false;
 
-    public boolean start() {
+    public boolean start() throws IllegalStateException {
         if (isRunning) {
             return false;
         }
@@ -20,7 +20,7 @@ public class Simulation {
         return true;
     }
 
-    public boolean pause() {
+    public boolean pause() throws IllegalStateException {
         if (!isRunning) {
             return false;
         }
