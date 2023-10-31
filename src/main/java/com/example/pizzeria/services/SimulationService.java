@@ -1,5 +1,6 @@
-package com.example.pizzeria;
+package com.example.pizzeria.services;
 
+import com.example.pizzeria.DinersGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

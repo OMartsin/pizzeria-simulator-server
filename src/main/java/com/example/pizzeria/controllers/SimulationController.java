@@ -1,7 +1,7 @@
 package com.example.pizzeria.controllers;
 
 import com.example.pizzeria.Initializer;
-import com.example.pizzeria.SimulationService;
+import com.example.pizzeria.services.SimulationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
