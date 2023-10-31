@@ -29,6 +29,6 @@ public class SimulationService {
         dinersGenerator.pause();
         isRunning = false;
 
-        return false;
+        return true;
     }
 }
