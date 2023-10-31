@@ -1,6 +1,6 @@
-package com.example.pizzeria;
+package com.example.pizzeria.config;
 
-import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.PizzaMenuReader;
 import com.example.pizzeria.models.Recipe;
 import com.example.pizzeria.dto.PizzeriaConfigInputDto;
 import org.mapstruct.Mapper;
