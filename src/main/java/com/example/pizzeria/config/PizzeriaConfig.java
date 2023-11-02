@@ -14,12 +14,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class PizzeriaConfig{
+public class PizzeriaConfig {
     private boolean specializedCooksMode;
     private Map<PizzaStage, Integer> cookStageDurationMap;
     private DinerArrivalConfig dinerArrivalConfig;
-    private int cashRegisterQuantity;
+    private Integer cashRegisterQuantity;
     private List<Recipe> menu;
     private Map<PizzaStage, Integer> cooksPerStage;
+    private Integer cooksNumber;
 
+    public void updateConfig(PizzeriaConfig config){
+        this.specializedCooksMode = config.specializedCooksMode;
+        this.cookStageDurationMap = config.cookStageDurationMap;
+        this.dinerArrivalConfig = config.dinerArrivalConfig;
+        this.cashRegisterQuantity = config.cashRegisterQuantity;
+        this.menu = config.menu;
+        this.cooksPerStage = config.cooksPerStage;
+        this.cooksNumber = config.cooksNumber;
+    }
 }

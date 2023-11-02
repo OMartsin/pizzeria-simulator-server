@@ -33,16 +33,12 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
 
     @Override
     public void setPizzeriaConfig(PizzeriaConfig config) {
-        pizzeriaConfig.setSpecializedCooksMode(config.isSpecializedCooksMode());
-        pizzeriaConfig.setCookStageDurationMap(config.getCookStageDurationMap());
-        pizzeriaConfig.setCooksPerStage(config.getCooksPerStage());
-        pizzeriaConfig.setDinerArrivalConfig(config.getDinerArrivalConfig());
-        pizzeriaConfig.setCashRegisterQuantity(config.getCashRegisterQuantity());
-        pizzeriaConfig.setMenu(config.getMenu());
+        pizzeriaConfig.updateConfig(config);
     }
 
     @Override
-    public PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) {
+    public PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) throws IOException,
+            IllegalArgumentException {
         return configMapper.toPizzeriaConfig(inputDto);
     }
 
