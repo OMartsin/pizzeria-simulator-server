@@ -40,7 +40,7 @@ public class ConfigController {
 
     @PutMapping()
     public ResponseEntity<PizzeriaConfig> setPizzeriaConfig
-            (@RequestBody PizzeriaConfigInputDto config) {
+            (@RequestBody PizzeriaConfigInputDto config) throws IOException, IllegalArgumentException{
         pizzeriaConfigService.setPizzeriaConfig(pizzeriaConfigService.mapToPizzeriaConfig(config));
         return  ResponseEntity.ok(pizzeriaConfigService.getPizzeriaConfig());
     }
@@ -52,4 +52,12 @@ public class ConfigController {
         response.put("message", "Error reading pizza menu from file");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
 }

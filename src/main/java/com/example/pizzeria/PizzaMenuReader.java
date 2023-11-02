@@ -19,6 +19,17 @@ public class PizzaMenuReader {
             throw new IOException("Could not find pizza-menu.json resource");
         }
 
-        return objectMapper.readValue(inputStream, new TypeReference<>() {});
+        List<Recipe> recipes = objectMapper.readValue(inputStream, new TypeReference<>() {});
+        /*
+            This is a mockup that is needed to test the modal window on the frontend,
+            in the future, rewrite the time initialization outside this object
+            and describe the coefficients for calculating time
+        */
+        recipes.forEach(recipe -> {
+            int preparationTime = recipe.getToppings().size() * 2 + 6;
+            recipe.setTime(preparationTime);
+        });
+
+        return recipes;
     }
 }

@@ -12,13 +12,18 @@ public class Recipe {
     private int id;
     private String name;
     private List<String> toppings;
+    private int time;
+    private String url;
     public Recipe() {
         toppings = new ArrayList<>();
     }
 
-    public Recipe(String name, List<String> toppings) {
+    public Recipe(int id, String name, List<String> toppings, String url) {
+        this.id = id;
         this.name = name;
         this.toppings = toppings;
+        this.time = toppings.size() * 2 + 6;
+        this.url = url;
     }
 
     public void addTopping(String topping) {

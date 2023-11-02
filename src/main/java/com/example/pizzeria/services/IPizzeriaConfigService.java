@@ -13,6 +13,6 @@ public interface IPizzeriaConfigService {
     PizzeriaConfig getPizzeriaConfig();
     List<PizzaStage> getPizzaStages();
     void setPizzeriaConfig(PizzeriaConfig config);
-    PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto);
+    PizzeriaConfig mapToPizzeriaConfig(PizzeriaConfigInputDto inputDto) throws IOException, IllegalArgumentException;
 
 }
