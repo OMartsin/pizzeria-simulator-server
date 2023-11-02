@@ -2,9 +2,9 @@ package com.example.pizzeria.services;
 
 import com.example.pizzeria.DinersGenerator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class SimulationService implements ISimulationService {
     private final DinersGenerator dinersGenerator;
