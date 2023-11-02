@@ -14,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class PizzeriaConfig{
+public class PizzeriaConfig {
     private boolean specializedCooksMode;
     private Map<PizzaStage, Integer> cookStageDurationMap;
     private DinerArrivalConfig dinerArrivalConfig;

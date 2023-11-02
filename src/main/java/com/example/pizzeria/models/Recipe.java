@@ -12,8 +12,8 @@ public class Recipe {
     private int id;
     private String name;
     private List<String> toppings;
-    private int time;
     private String url;
+
     public Recipe() {
         toppings = new ArrayList<>();
     }
@@ -22,7 +22,6 @@ public class Recipe {
         this.id = id;
         this.name = name;
         this.toppings = toppings;
-        this.time = toppings.size() * 2 + 6;
         this.url = url;
     }
 
