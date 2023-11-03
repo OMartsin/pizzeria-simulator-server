@@ -9,6 +9,7 @@ import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Recipe;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,17 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PizzeriaConfigService implements IPizzeriaConfigService {
     private final PizzeriaConfig pizzeriaConfig;
     private final PizzeriaConfigMapper configMapper;
     private final PizzaMenuReader pizzaMenuReader;
-
-    public PizzeriaConfigService(PizzeriaConfig pizzeriaConfig, PizzeriaConfigMapper pizzeriaConfigMapper,
-                                 PizzaMenuReader pizzaMenuReader){
-        this.pizzeriaConfig = pizzeriaConfig;
-        this.configMapper = pizzeriaConfigMapper;
-        this.pizzaMenuReader = pizzaMenuReader;
-    }
 
     @PostConstruct
     public void initDefaultConfig(){
