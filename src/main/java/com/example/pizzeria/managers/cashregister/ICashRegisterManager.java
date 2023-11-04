@@ -1,4 +1,4 @@
-package com.example.pizzeria;
+package com.example.pizzeria.managers.cashregister;
 
 import com.example.pizzeria.models.Dinner;
 
