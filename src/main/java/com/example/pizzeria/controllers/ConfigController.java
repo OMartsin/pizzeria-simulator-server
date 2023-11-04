@@ -52,9 +52,9 @@ public class ConfigController {
             @ApiResponse(responseCode = "200", description = "Config updated",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PizzeriaConfig.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request",
+            @ApiResponse(responseCode = "400", description = "Cooks number must be greater than 0",
                     content = @Content),
-            @ApiResponse(responseCode = "500", description = "Cooks number must be greater than 0",
+            @ApiResponse(responseCode = "500", description = "Error reading pizza menu from file",
                     content = @Content) })
     @GetMapping("/{id}")
     public ResponseEntity<PizzeriaConfig> setPizzeriaConfig
