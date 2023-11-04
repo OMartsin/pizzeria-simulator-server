@@ -1,5 +1,6 @@
 package com.example.pizzeria;
 
+import com.example.pizzeria.managers.cashregister.CashRegisterManager;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Dinner;
 import com.example.pizzeria.models.Order;
@@ -65,7 +66,7 @@ public class DinersGenerator {
         List<Recipe> tempList = new ArrayList<>(menu);
         Collections.shuffle(tempList, new Random()); // Shuffle the list randomly
         Faker faker = new Faker();
-        return new Dinner(new Order(tempList.subList(0,random)),faker.name().firstName());
+        return new Dinner(faker.name().fullName(), new Order(tempList.subList(0,random), null));
     }
 
 }
