@@ -3,7 +3,7 @@ package com.example.pizzeria.managers.cooking;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaStage;
-import com.example.pizzeria.models.PizzaState;
+import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
 import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
@@ -18,8 +18,8 @@ import java.util.*;
 @Service
 public class UniversalCookingManager implements ICookingManager {
     private final PizzeriaConfig config;
-    private Map<Order, List<PizzaState>> orders;
-    private Map<Cook, PizzaState> cooks;
+    private Map<Order, List<PizzaCookingState>> orders;
+    private Map<Cook, PizzaCookingState> cooks;
 
     public void init() {
         orders = new HashMap<>();
@@ -35,7 +35,7 @@ public class UniversalCookingManager implements ICookingManager {
     public void acceptOrder(Order order) {
         try{
             orders.put(order, order.getRecipes().stream().map(recipe ->
-                    new PizzaState(recipe, order.getId())).toList());
+                    new PizzaCookingState(recipe, order.getId())).toList());
         }
         catch (Exception e){
             System.out.println("Error while accepting order");
@@ -72,20 +72,20 @@ public class UniversalCookingManager implements ICookingManager {
         while(!orders.isEmpty()){
             Cook cook = findAvailableCook();
             if (cook != null) {
-                PizzaState pizzaState = cooks.get(cook);
-                if(pizzaState == null) {
+                PizzaCookingState pizzaCookingState = cooks.get(cook);
+                if(pizzaCookingState == null) {
                     System.out.println("Finding first not completed pizza");
-                    pizzaState = getFirstNotCompletedPizzaState();
+                    pizzaCookingState = getFirstNotCompletedPizzaState();
                 }
-                if(pizzaState == null){
+                if(pizzaCookingState == null){
                     break;
                 }
-                if(pizzaState.getCurrStage().equals(PizzaStage.Completed)) {
+                if(pizzaCookingState.getCurrStage().equals(PizzaStage.Completed)) {
                     cooks.put(cook, null);
                     break;
                 }
-                cooks.put(cook, pizzaState);
-                ICookTask task = createCookTask(cook, pizzaState);
+                cooks.put(cook, pizzaCookingState);
+                ICookTask task = createCookTask(cook, pizzaCookingState);
                 cook.addTask(task);
             }
             break;
@@ -104,50 +104,50 @@ public class UniversalCookingManager implements ICookingManager {
         return (int) (config.getPizzaStagesTimeCoeffs().get(stage) * config.getMinimumPizzaTime());
     }
 
-    private PizzaState getFirstNotCompletedPizzaState() {
-        for (Map.Entry<Order, List<PizzaState>> entry : orders.entrySet()) {
-            List<PizzaState> pizzaStates = entry.getValue();
+    private PizzaCookingState getFirstNotCompletedPizzaState() {
+        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
+            List<PizzaCookingState> pizzaCookingStates = entry.getValue();
 
-            for (PizzaState pizzaState : pizzaStates) {
-                if (pizzaState.getCurrStage() != PizzaStage.Completed &&
-                        pizzaState.getIsCooking().equals(false)) {
-                    return pizzaState;
+            for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
+                if (pizzaCookingState.getCurrStage() != PizzaStage.Completed &&
+                        pizzaCookingState.getIsCooking().equals(false)) {
+                    return pizzaCookingState;
                 }
             }
         }
         return null;
     }
 
-    private ICookTask createCookTask(Cook cook, PizzaState pizzaState){
+    private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                cooks.get(cook), getStageExecutionTime(pizzaState.getCurrStage()),
+                cooks.get(cook), getStageExecutionTime(pizzaCookingState.getCurrStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
-                        if(!pizzaState.getCurrStage().equals(PizzaStage.Completed)) {
-                            cook.addTask(createCookTask(cook, pizzaState));
+                        if(!pizzaCookingState.getCurrStage().equals(PizzaStage.Completed)) {
+                            cook.addTask(createCookTask(cook, pizzaCookingState));
                         }
                         else {
                             cooks.put(cook, null);
-                            checkIsOrderCompleted(pizzaState);
+                            checkIsOrderCompleted(pizzaCookingState);
                             processOrders();
                         }
                     }
                 });
     }
 
-    private void checkIsOrderCompleted(PizzaState pizzaState) {
+    private void checkIsOrderCompleted(PizzaCookingState pizzaCookingState) {
         Order targetOrder = null;
 
-        for (Map.Entry<Order, List<PizzaState>> entry : orders.entrySet()){
-            if(entry.getKey().getId().equals(pizzaState.getOrderId())) {
+        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()){
+            if(entry.getKey().getId().equals(pizzaCookingState.getOrderId())) {
                 targetOrder = entry.getKey();
                 break;
             }
         }
 
         boolean allPizzasCompleted = orders.get(targetOrder).stream()
-                .allMatch(pizzaState1 -> pizzaState1.getCurrStage() == PizzaStage.Completed);
+                .allMatch(pizzaCookingState1 -> pizzaCookingState1.getCurrStage() == PizzaStage.Completed);
 
         if (allPizzasCompleted) {
             System.out.println("All pizzas in Order " + targetOrder.getId() + " are completed.");

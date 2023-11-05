@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PizzaState {
+public class PizzaCookingState {
     private final Recipe recipe;
     private final Integer orderId;
     private PizzaStage currStage;
@@ -13,7 +13,7 @@ public class PizzaState {
 
     private Boolean isCooking = false;
 
-    public PizzaState(Recipe recipe, Integer orderId) {
+    public PizzaCookingState(Recipe recipe, Integer orderId) {
         this.recipe = recipe;
         this.orderId = orderId;
         this.currStage = PizzaStage.Dough;
