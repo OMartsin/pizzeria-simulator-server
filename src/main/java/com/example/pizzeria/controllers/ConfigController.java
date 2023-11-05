@@ -56,9 +56,8 @@ public class ConfigController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Error reading pizza menu from file",
                     content = @Content) })
-    @GetMapping("/{id}")
     public ResponseEntity<PizzeriaConfig> setPizzeriaConfig
-            (@RequestBody PizzeriaConfigInputDto config) throws IOException, IllegalArgumentException{
+            (@RequestBody PizzeriaConfigInputDto config) throws IOException, IllegalArgumentException {
         pizzeriaConfigService.setPizzeriaConfig(pizzeriaConfigService.mapToPizzeriaConfig(config));
         return  ResponseEntity.ok(pizzeriaConfigService.getPizzeriaConfig());
     }
