@@ -20,16 +20,14 @@ public class PizzaHandlingCookTask implements ICookTask {
         try {
             cook.setStatus(CookStatus.BUSY);
             pizzaCookingState.setIsCooking(true);
+
+            Thread.sleep(executionTime);
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getRecipe());
-
             handlePizza();
-            Thread.sleep(executionTime);
-
-
-            cook.setStatus(CookStatus.FREE);
             pizzaCookingState.setIsCooking(false);
+            cook.setStatus(CookStatus.FREE);
             callback.onTaskCompleted(cook);
         } catch (InterruptedException e) {
             e.printStackTrace();

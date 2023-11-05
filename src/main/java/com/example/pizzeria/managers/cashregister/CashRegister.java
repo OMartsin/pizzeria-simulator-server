@@ -3,6 +3,7 @@ package com.example.pizzeria.managers.cashregister;
 import com.example.pizzeria.managers.cooking.ICookingManager;
 import com.example.pizzeria.models.Dinner;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
@@ -17,7 +18,7 @@ public class CashRegister {
     private final Deque<Dinner> dinners;
     private final ICookingManager cookingManager;
 
-    public CashRegister(ICookingManager cookingManager) {
+    public CashRegister(@Qualifier("specializedCookingManager") ICookingManager cookingManager) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.dinners = new ArrayDeque<>();
         this.cookingManager = cookingManager;
