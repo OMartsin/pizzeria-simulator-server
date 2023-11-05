@@ -3,84 +3,84 @@
     "id": 1,
     "name": "Pepperoni",
     "toppings": ["Tomato", "Pepperoni", "Mozzarella"],
-    "url": "https://i.imgur.com/b5XAWtL.png"
+    "url": "https://imgur.com/Ao3Mwi0.png"
   },
   {
     "id": 2,
     "name": "Hawaiian",
     "toppings": ["Neapolitan Sauce", "Roasted Chicken", "Pineapples", "Mozzarella"],
-    "url": "https://i.imgur.com/FAzjO9e.png"
+    "url": "https://imgur.com/TZZKCxO.png"
   },
   {
     "id": 3,
     "name": "Vegetarian",
     "toppings": ["Tomato", "Tomatoes", "Bell Peppers", "Mushrooms", "Olives", "Parmesan"],
-    "url": "https://i.imgur.com/t7xOnK0.png"
+    "url": "https://imgur.com/LJ8HuHf.png"
   },
   {
     "id": 4,
     "name": "Verona",
     "toppings": ["Cream", "Ham", "Arugula", "Mushrooms", "Parmesan"],
-    "url": "https://i.imgur.com/BLss0tp.png"
+    "url": "https://imgur.com/ozefYcp.png"
   },
   {
     "id": 5,
     "name": "Prosciutto",
     "toppings": ["Neapolitan Sauce", "Ham", "Bacon", "Mushrooms", "Artichokes", "Mozzarella"],
-    "url": "https://i.imgur.com/SW0QRGh.png"
+    "url": "https://imgur.com/XLJ9Kjw.png"
   },
   {
     "id": 6,
     "name": "Capricciosa",
     "toppings": ["Neapolitan Sauce", "Ham", "Mushrooms", "Olives", "Mozzarella"],
-    "url": "https://i.imgur.com/EJCbLSq.png"
+    "url": "https://imgur.com/gGJc5Au.png"
   },
   {
     "id": 7,
     "name": "Tuna",
     "toppings": ["Neapolitan Sauce", "Tuna", "Marinated Onions", "Capers", "Mozzarella"],
-    "url": "https://i.imgur.com/kqo3vdC.png"
+    "url": "https://imgur.com/h46Zk4S.png"
   },
   {
     "id": 8,
     "name": "Quattro Formaggi",
     "toppings": ["Cream", "Mozzarella", "Cream Cheese", "Parmesan", "Gorgonzola"],
-    "url": "https://i.imgur.com/rhMEGka.png"
+    "url": "https://imgur.com/nnrQNc0.png"
   },
   {
     "id": 9,
     "name": "Meat",
     "toppings": ["Neapolitan Sauce", "Ham", "Salami", "Chicken Breast", "Bacon", "Mozzarella"],
-    "url": "https://i.imgur.com/Re6rkbF.png"
+    "url": "https://imgur.com/ncy8wzC.png"
   },
   {
     "id": 10,
     "name": "Spanish",
     "toppings": ["Tomato", "Chorizo", "Bacon", "Sausages", "Corn", "Mozzarella"],
-    "url": "https://i.imgur.com/8H3BBra.png"
+    "url": "https://imgur.com/LzGeI0d.png"
   },
   {
     "id": 11,
     "name": "Diavola",
     "toppings": ["Spicy", "Chorizo", "Salami Milano", "Marinated Onions", "Chili Pepper", "Mozzarella"],
-    "url": "https://i.imgur.com/m38ywnF.png"
+    "url": "https://imgur.com/ktYCWYp.png"
   },
   {
     "id": 12,
     "name": "3 Cheeses with Pear",
     "toppings": ["Cream", "Pear", "Honey", "Walnuts", "Mozzarella"],
-    "url": "https://i.imgur.com/eHJe972.png"
+    "url": "https://imgur.com/MOSlX0W.png"
   },
   {
     "id": 13,
     "name": "Mafia of Cesareni",
     "toppings": ["Neapolitan Sauce", "Chicken Breast", "Bacon", "Mixed Greens", "Cherry Tomatoes", "Mozzarella", "Parmesan"],
-    "url": "https://i.imgur.com/W1Okr0U.png"
+    "url": "https://imgur.com/B3BHG3E.png"
   },
   {
     "id": 14,
     "name": "Con Birra",
     "toppings": ["Cream", "Hunter's Sausages", "Chicken Breast", "Chili Pepper", "Mozzarella", "Gorgonzola", "Chorizo"],
-    "url": "https://i.imgur.com/XD73JtH.png"
+    "url": "https://imgur.com/O5z437D.png"
   }
 ]
