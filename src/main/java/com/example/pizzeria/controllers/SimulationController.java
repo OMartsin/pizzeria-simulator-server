@@ -2,6 +2,7 @@ package com.example.pizzeria.controllers;
 
 import com.example.pizzeria.Initializer;
 import com.example.pizzeria.services.ISimulationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class SimulationController {
     private final Initializer initializer;
 
     @GetMapping("start")
+    @Operation(summary = "Start the simulation")
     public ResponseEntity<Map<String, String>> start() throws IllegalStateException {
         initializer.init();
         boolean started = simulationService.start();
@@ -33,6 +35,7 @@ public class SimulationController {
     }
 
     @GetMapping("pause")
+    @Operation(summary = "Pause the simulation")
     public ResponseEntity<Map<String, String>> pause() throws IllegalStateException {
         boolean paused = simulationService.pause();
 
