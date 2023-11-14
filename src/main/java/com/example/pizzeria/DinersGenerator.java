@@ -2,7 +2,7 @@ package com.example.pizzeria;
 
 import com.example.pizzeria.managers.cashregister.CashRegisterManager;
 import com.example.pizzeria.config.PizzeriaConfig;
-import com.example.pizzeria.models.Dinner;
+import com.example.pizzeria.models.Diner;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.Recipe;
 import com.github.javafaker.Faker;
@@ -36,8 +36,8 @@ public class DinersGenerator {
         Runnable generateDiners = () -> {
             System.out.println(pizzeriaConfig.getDinerArrivalConfig().getQuantity());
             for (int i = 0; i < pizzeriaConfig.getDinerArrivalConfig().getQuantity(); ++i) {
-                Dinner newDinner = generateDinner(pizzeriaConfig.getMenu());
-                cashRegisterManager.acceptDinner(newDinner);
+                Diner newDiner = generateDinner(pizzeriaConfig.getMenu());
+                cashRegisterManager.acceptDinner(newDiner);
                 //System.out.println("Dinner " + newDinner.name() +  " order" + newDinner.order());
             }
 
@@ -61,12 +61,12 @@ public class DinersGenerator {
         }
     }
 
-    private Dinner generateDinner(List<Recipe> menu) {
+    private Diner generateDinner(List<Recipe> menu) {
         int random = (int) (Math.random() * menu.size() - 1) + 1;
         List<Recipe> tempList = new ArrayList<>(menu);
         Collections.shuffle(tempList, new Random()); // Shuffle the list randomly
         Faker faker = new Faker();
-        return new Dinner(faker.name().fullName(), new Order(tempList.subList(0,random), null));
+        return new Diner(faker.name().fullName(), new Order(tempList.subList(0,random), null));
     }
 
 }

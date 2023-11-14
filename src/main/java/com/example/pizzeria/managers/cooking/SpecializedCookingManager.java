@@ -7,7 +7,6 @@ import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.cook.Cook;
-import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
@@ -27,6 +26,8 @@ public class SpecializedCookingManager implements ICookingManager {
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
     private Map<PizzaStage, List<Cook>> cooks;
+    private final CookingInfoFinder cookingInfoFinder;
+    private final StageExecutionTimeCalculator stageExecutionTimeCalculator;
 
     public void init() {
         orders = new HashMap<>();
@@ -89,11 +90,11 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     private void giveNewTaskToCook(Cook cook) {
-        PizzaStage pizzaStage = findPizzaStageByCook(cook).orElse(null);
+        PizzaStage pizzaStage = cookingInfoFinder.findPizzaStageByCook(cooks, cook).orElse(null);
         if(pizzaStage == null) {
             return;
         }
-        PizzaCookingState pizzaCookingState = getFirstNotCompletedPizzaStateWithStage(pizzaStage);
+        PizzaCookingState pizzaCookingState = cookingInfoFinder.findFirstNotCompletedPizzaState(orders, pizzaStage);
         if(pizzaCookingState == null) {
             return;
         }
@@ -107,7 +108,7 @@ public class SpecializedCookingManager implements ICookingManager {
     private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
-            Cook cook = findAvailableCook(pizzaCookingState.getCurrStage());
+            Cook cook = cookingInfoFinder.findAvailableCook(cooks, pizzaCookingState.getCurrStage());
             if(cook == null){
                 return;
             }
@@ -119,48 +120,9 @@ public class SpecializedCookingManager implements ICookingManager {
         }
     }
 
-
-
-    private Cook findAvailableCook(PizzaStage pizzaStage) {
-        List<Cook> tempCooksList = cooks.get(pizzaStage);
-        for (Cook cook : tempCooksList) {
-            if (cook.getStatus().equals(CookStatus.FREE)) {
-                return cook;
-            }
-        }
-        return null;
-    }
-
-    public Optional<PizzaStage> findPizzaStageByCook(Cook cook) {
-        for (Map.Entry<PizzaStage, List<Cook>> entry : cooks.entrySet()) {
-            if (entry.getValue().contains(cook)) {
-                return Optional.of(entry.getKey());
-            }
-        }
-        return Optional.empty();
-    }
-
-    private Integer getStageExecutionTime(PizzaStage stage){
-        return (int) (config.getPizzaStagesTimeCoeffs().get(stage) * config.getMinimumPizzaTime());
-    }
-
-    private PizzaCookingState getFirstNotCompletedPizzaStateWithStage(PizzaStage stage) {
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
-            List<PizzaCookingState> pizzaCookingStates = entry.getValue();
-
-            for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if (pizzaCookingState.getCurrStage() == stage &&
-                        pizzaCookingState.getIsCooking().equals(false)) {
-                    return pizzaCookingState;
-                }
-            }
-        }
-        return null;
-    }
-
     private ICookTask createCookTask(PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                pizzaCookingState, getStageExecutionTime(pizzaCookingState.getCurrStage()),
+                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getCurrStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
@@ -169,29 +131,16 @@ public class SpecializedCookingManager implements ICookingManager {
                             handleNewOrderTasks(List.of(pizzaCookingState));
                         }
                         else{
-                            checkIsOrderCompleted(pizzaCookingState);
+                            checkIsOrderCompleted();
                         }
                     }
                 });
     }
 
-    private void checkIsOrderCompleted(PizzaCookingState pizzaCookingState) {
-        Order targetOrder = null;
-
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()){
-            if(entry.getKey().getId().equals(pizzaCookingState.getOrderId())) {
-                targetOrder = entry.getKey();
-                break;
-            }
-        }
-
-        boolean allPizzasCompleted = orders.get(targetOrder).stream()
-                .allMatch(pizzaCookingState1 -> pizzaCookingState1.getCurrStage() == PizzaStage.Completed);
-
-        if (allPizzasCompleted) {
-            System.out.println("All pizzas in Order " + targetOrder.getId() + " are completed.");
-        } else {
-            System.out.println("Not all pizzas in Order " + targetOrder.getId() + " are completed yet.");
+    private void checkIsOrderCompleted() {
+        var completedOrder = cookingInfoFinder.findCompletedOrder(orders);
+        if (completedOrder != null) {
+            System.out.println("All pizzas in Order " + completedOrder.getId() + " are completed.");
         }
     }
 }
