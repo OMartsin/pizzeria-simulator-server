@@ -5,7 +5,6 @@ import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
-import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
@@ -20,6 +19,8 @@ public class UniversalCookingManager implements ICookingManager {
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
     private Map<Cook, PizzaCookingState> cooks;
+    private final CookingInfoFinder cookingInfoFinder;
+    private final StageExecutionTimeCalculator stageExecutionTimeCalculator;
 
     public void init() {
         orders = new HashMap<>();
@@ -69,7 +70,7 @@ public class UniversalCookingManager implements ICookingManager {
 
     private void giveNewTaskToCook(Cook cook) {
         PizzaCookingState currPizzaStage = cooks.get(cook);
-        PizzaCookingState pizzaCookingState = getFirstNotCompletedPizzaState();
+        PizzaCookingState pizzaCookingState = cookingInfoFinder.findFirstNotCompletedPizzaState(orders);
         if(currPizzaStage == null) {
             cooks.put(cook, pizzaCookingState);
         }
@@ -83,7 +84,7 @@ public class UniversalCookingManager implements ICookingManager {
     private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
-            Cook cook = findAvailableCook();
+            Cook cook = cookingInfoFinder.findAvailableCook(cooks);
             if(cook == null){
                 return;
             }
@@ -93,35 +94,9 @@ public class UniversalCookingManager implements ICookingManager {
         }
     }
 
-    private Cook findAvailableCook() {
-        for (Cook cook : cooks.keySet()) {
-            if (cook.getStatus().equals(CookStatus.FREE) && cooks.get(cook) == null)
-                return cook;
-            }
-        return null;
-    }
-
-    private Integer getStageExecutionTime(PizzaStage stage){
-        return (int) (config.getPizzaStagesTimeCoeffs().get(stage) * config.getMinimumPizzaTime());
-    }
-
-    private PizzaCookingState getFirstNotCompletedPizzaState() {
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
-            List<PizzaCookingState> pizzaCookingStates = entry.getValue();
-
-            for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if (pizzaCookingState.getCurrStage() != PizzaStage.Completed &&
-                        pizzaCookingState.getIsCooking().equals(false)) {
-                    return pizzaCookingState;
-                }
-            }
-        }
-        return null;
-    }
-
     private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                cooks.get(cook), getStageExecutionTime(pizzaCookingState.getCurrStage()),
+                cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getCurrStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
@@ -130,30 +105,17 @@ public class UniversalCookingManager implements ICookingManager {
                         }
                         else {
                             cooks.put(cook, null);
-                            checkIsOrderCompleted(pizzaCookingState);
+                            checkIsOrderCompleted();
                             giveNewTaskToCook(cook);
                         }
                     }
                 });
     }
 
-    private void checkIsOrderCompleted(PizzaCookingState pizzaCookingState) {
-        Order targetOrder = null;
-
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()){
-            if(entry.getKey().getId().equals(pizzaCookingState.getOrderId())) {
-                targetOrder = entry.getKey();
-                break;
-            }
-        }
-
-        boolean allPizzasCompleted = orders.get(targetOrder).stream()
-                .allMatch(pizzaCookingState1 -> pizzaCookingState1.getCurrStage() == PizzaStage.Completed);
-
-        if (allPizzasCompleted) {
-            System.out.println("All pizzas in Order " + targetOrder.getId() + " are completed.");
-        } else {
-            System.out.println("Not all pizzas in Order " + targetOrder.getId() + " are completed yet.");
+    private void checkIsOrderCompleted() {
+        var completedOrder = cookingInfoFinder.findCompletedOrder(orders);
+        if (completedOrder != null) {
+            System.out.println("All pizzas in Order " + completedOrder.getId() + " are completed.");
         }
     }
 }
