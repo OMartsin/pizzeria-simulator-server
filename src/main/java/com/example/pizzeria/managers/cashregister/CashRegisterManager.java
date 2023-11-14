@@ -1,6 +1,6 @@
 package com.example.pizzeria.managers.cashregister;
 
-import com.example.pizzeria.models.Dinner;
+import com.example.pizzeria.models.Diner;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,14 +17,14 @@ public class CashRegisterManager implements ICashRegisterManager {
     private List<CashRegister> cashRegisters;
 
     @Override
-    public void acceptDinner(Dinner dinner) throws IllegalStateException {
+    public void acceptDinner(Diner diner) throws IllegalStateException {
         if (this.cashRegisters.isEmpty()) {
             throw new IllegalStateException("No cash registers available");
         }
         CashRegister cashRegister = this.cashRegisters.stream()
-                .min(Comparator.comparingInt(cr -> cr.getDinners().size()))
+                .min(Comparator.comparingInt(cr -> cr.getDiners().size()))
                 .orElseThrow();
-        cashRegister.addDinner(dinner);
+        cashRegister.addDinner(diner);
     }
 
 }
