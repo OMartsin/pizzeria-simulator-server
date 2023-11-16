@@ -58,7 +58,6 @@ public class SpecializedCookingManager implements ICookingManager {
         }
         System.out.println("Order " + order.getId() + " accepted");
         System.out.println("Pizzas: ");
-        pauseCook(1);
         order.getRecipes().forEach(recipe -> System.out.println(recipe.getName()));
         handleNewOrderTasks(orders.get(order));
     }
