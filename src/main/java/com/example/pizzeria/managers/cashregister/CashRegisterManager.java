@@ -1,9 +1,12 @@
 package com.example.pizzeria.managers.cashregister;
 
+import com.example.pizzeria.events.ServiceOrderUpdateEvent;
 import com.example.pizzeria.models.Diner;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -14,6 +17,10 @@ import java.util.List;
 @Setter
 @Getter
 public class CashRegisterManager implements ICashRegisterManager {
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
     private List<CashRegister> cashRegisters;
 
     @Override
@@ -25,6 +32,8 @@ public class CashRegisterManager implements ICashRegisterManager {
                 .min(Comparator.comparingInt(cr -> cr.getDiners().size()))
                 .orElseThrow();
         cashRegister.addDinner(diner);
+      
+        publisher.publishEvent(new ServiceOrderUpdateEvent(this, cashRegister, diner.getOrder()));
     }
 
 }

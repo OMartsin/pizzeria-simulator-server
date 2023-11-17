@@ -1,6 +1,8 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.events.CookingOrderUpdateEvent;
+import com.example.pizzeria.events.PausedCookUpdateEvent;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.PizzaStage;
@@ -9,6 +11,8 @@ import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,6 +20,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class SpecializedCookingManager implements ICookingManager {
+    @Autowired
+    ApplicationEventPublisher publisher;
+
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
     private Map<PizzaStage, List<Cook>> cooks;
@@ -61,6 +68,7 @@ public class SpecializedCookingManager implements ICookingManager {
             for(Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
                     cook.pauseCook();
+                    publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
                     return;
                 }
             }
@@ -73,6 +81,7 @@ public class SpecializedCookingManager implements ICookingManager {
             for (Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
                     cook.resumeCook();
+                    publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
                     return;
                 }
             }
@@ -91,6 +100,8 @@ public class SpecializedCookingManager implements ICookingManager {
         ICookTask task = createCookTask(pizzaCookingState);
         pizzaCookingState.setIsCooking(true);
         cook.addTask(task);
+
+        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
@@ -103,6 +114,8 @@ public class SpecializedCookingManager implements ICookingManager {
             ICookTask task = createCookTask(pizzaCookingState);
             pizzaCookingState.setIsCooking(true);
             cook.addTask(task);
+
+            publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
         }
     }
 
