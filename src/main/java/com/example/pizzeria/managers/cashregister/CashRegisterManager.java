@@ -32,7 +32,7 @@ public class CashRegisterManager implements ICashRegisterManager {
                 .min(Comparator.comparingInt(cr -> cr.getDiners().size()))
                 .orElseThrow();
         cashRegister.addDinner(diner);
-
+      
         publisher.publishEvent(new ServiceOrderUpdateEvent(this, cashRegister, diner.getOrder()));
     }
 
