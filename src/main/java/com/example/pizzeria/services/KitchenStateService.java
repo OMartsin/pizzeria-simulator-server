@@ -21,7 +21,8 @@ public class KitchenStateService {
     public KitchenStateDto getKitchenState() {
         if(specializedCookingManager.getCooks() != null)
             return kitchenStateMapper.toKitchenStateDto(
-                    cookMapper.mapCooks(specializedCookingManager.getCooks()),
+                    cookMapper.mapCooksWithSpec(specializedCookingManager.getCooks(),
+                            specializedCookingManager.getCookPerStage()),
                     orderMapper.mapOrders(specializedCookingManager.getOrders())
             );
         else if(universalCookingManager.getCooks() != null)

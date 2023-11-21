@@ -37,10 +37,14 @@ public class PizzaHandlingCookTask implements ICookTask {
 
     private void handlePizza(){
         if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && (pizzaCookingState.getCurrToppingIndex() == null ||
-                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size())) {
+                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size() - 1)) {
             pizzaCookingState.setCurrToppingIndex
                     (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
             return;
+        }
+        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && pizzaCookingState.getCurrToppingIndex() ==
+                pizzaCookingState.getRecipe().getToppings().size() - 1) {
+            pizzaCookingState.setCurrToppingIndex(null);
         }
         var nextPizzaStage = pizzaCookingState.getNextStage();
         pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));

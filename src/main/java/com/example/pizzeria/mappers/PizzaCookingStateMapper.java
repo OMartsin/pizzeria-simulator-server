@@ -16,6 +16,8 @@ public interface PizzaCookingStateMapper {
     PizzaCookingStateDto toPizzaCookingStateDto(PizzaCookingState state);
 
     default String getToppingName(PizzaCookingState state) {
+        if(state.getCurrToppingIndex() == null)
+            return null;
         return state.getRecipe().getToppings().get(state.getCurrToppingIndex());
     }
 }

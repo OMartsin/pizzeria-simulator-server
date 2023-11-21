@@ -24,7 +24,7 @@ public class PizzaCookingState {
         this.recipe = recipe;
         this.orderId = orderId;
         this.currStage = null;
-        this.currToppingIndex = 0;
+        this.currToppingIndex = null;
     }
 
     public PizzaStage getNextStage() {

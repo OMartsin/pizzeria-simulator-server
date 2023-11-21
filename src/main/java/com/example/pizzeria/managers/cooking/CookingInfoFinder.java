@@ -15,6 +15,7 @@ import java.util.Optional;
 public class CookingInfoFinder {
     public Cook findAvailableCook(Map<PizzaStage, List<Cook>> cooks, PizzaStage pizzaStage) {
         List<Cook> tempCooksList = cooks.get(pizzaStage);
+        System.out.println(pizzaStage);
         for (Cook cook : tempCooksList) {
             if (cook.getStatus().equals(CookStatus.FREE)) {
                 return cook;

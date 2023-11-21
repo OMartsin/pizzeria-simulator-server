@@ -26,10 +26,33 @@ public interface CookMapper {
 
     default List<CookDto> mapCooks(Map<Cook, PizzaCookingState> cookStateMap) {
         return cookStateMap.entrySet().stream()
-                .map(entry -> toCookDto(entry.getKey(),
-                        null,
-                        entry.getValue().getOrderId(),
-                        entry.getValue().getId()))
+                .map(entry -> {
+                    PizzaCookingState state = entry.getValue();
+                    Integer orderId = state != null ? state.getOrderId() : null;
+                    Integer orderPizzaId = state != null ? state.getId() : null;
+                    return toCookDto(entry.getKey(), null, orderId, orderPizzaId);
+                })
                 .collect(Collectors.toList());
+    }
+
+    default List<CookDto> mapCooksWithSpec(Map<Cook, PizzaCookingState> cookStateMap,
+                                           Map<PizzaStage, List<Cook>> stageCookMap) {
+        return cookStateMap.entrySet().stream()
+                .map(entry -> {
+                    PizzaCookingState state = entry.getValue();
+                    PizzaStage specialization = findSpecializationForCook(entry.getKey(), stageCookMap);
+                    Integer orderId = state != null ? state.getOrderId() : null;
+                    Integer orderPizzaId = state != null ? state.getId() : null;
+                    return toCookDto(entry.getKey(), specialization, orderId, orderPizzaId);
+                })
+                .collect(Collectors.toList());
+    }
+
+    default PizzaStage findSpecializationForCook(Cook cook, Map<PizzaStage, List<Cook>> stageCookMap) {
+        return stageCookMap.entrySet().stream()
+                .filter(entry -> entry.getValue().contains(cook))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null); // or any default value you prefer
     }
 }

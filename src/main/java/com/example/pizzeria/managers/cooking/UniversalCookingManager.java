@@ -12,15 +12,18 @@ import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
 @Getter
 @Service
 public class UniversalCookingManager implements ICookingManager {
+    @Autowired
     ApplicationEventPublisher publisher;
 
     private final PizzeriaConfig config;
@@ -113,10 +116,12 @@ public class UniversalCookingManager implements ICookingManager {
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
-                        if(!pizzaCookingState.getCurrStage().equals(PizzaStage.Completed)) {
+                        if(!pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
                             cook.addTask(createCookTask(cook, pizzaCookingState));
                         }
                         else {
+                            pizzaCookingState.setCompletedAt(LocalDateTime.now());
+                            pizzaCookingState.setCurrStage(PizzaStage.Completed);
                             cooks.put(cook, null);
                             checkIsOrderCompleted();
                             giveNewTaskToCook(cook);
