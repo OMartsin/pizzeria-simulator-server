@@ -13,6 +13,7 @@ import com.example.pizzeria.models.task.PizzaHandlingCookTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -46,6 +47,7 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     @Override
+
     public void acceptOrder(Order order) {
         try {
             orders.put(order, order.getRecipes().stream().map(recipe ->
@@ -63,6 +65,7 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     @Override
+
     public void pauseCook(Integer cookId) {
         for (List<Cook> cooks : cooks.values()) {
             for(Cook cook : cooks) {
