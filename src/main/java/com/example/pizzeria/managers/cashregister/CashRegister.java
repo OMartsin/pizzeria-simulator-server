@@ -25,6 +25,7 @@ public class CashRegister {
     }
 
     public void addDinner(Diner diner) {
+        diner.getOrder().setCashRegisterId(this.id);
         System.out.println("Before adding dinner to CashRegister: " + diner.getId());
         this.diners.add(diner);
         System.out.println("After adding dinner to CashRegister: " + diner.getId());

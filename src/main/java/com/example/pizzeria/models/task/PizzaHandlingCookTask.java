@@ -7,6 +7,7 @@ import com.example.pizzeria.models.cook.CookStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -43,5 +44,9 @@ public class PizzaHandlingCookTask implements ICookTask {
         }
         var nextPizzaStage = pizzaCookingState.getNextStage();
         pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
+        if(pizzaCookingState.getCurrStage() == PizzaStage.Completed) {
+            var time = pizzaCookingState.getCompletedAt() != null ? pizzaCookingState.getCompletedAt() : LocalDateTime.now();
+            pizzaCookingState.setCompletedAt(time);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.pizzeria.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
@@ -14,6 +15,7 @@ public class PizzaCookingState {
     private final Integer orderId;
     private PizzaStage currStage;
     private Integer currToppingIndex;
+    private LocalDateTime completedAt;
 
     private Boolean isCooking = false;
 
@@ -31,5 +33,4 @@ public class PizzaCookingState {
         }
         return this.currStage.getNext();
     }
-
 }

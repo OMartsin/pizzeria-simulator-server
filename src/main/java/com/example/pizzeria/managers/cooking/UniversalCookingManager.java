@@ -10,17 +10,17 @@ import com.example.pizzeria.models.cook.Cook;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @RequiredArgsConstructor
+@Getter
 @Service
 public class UniversalCookingManager implements ICookingManager {
-    @Autowired
     ApplicationEventPublisher publisher;
 
     private final PizzeriaConfig config;
