@@ -109,7 +109,7 @@ public class UniversalCookingManager implements ICookingManager {
 
     private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getCurrStage()),
+                cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {

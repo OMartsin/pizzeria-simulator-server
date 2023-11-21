@@ -38,7 +38,7 @@ public class CookingInfoFinder {
             List<PizzaCookingState> pizzaCookingStates = entry.getValue();
 
             for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if (pizzaCookingState.getCurrStage() == pizzaStage &&
+                if (pizzaCookingState.getNextStage() == pizzaStage &&
                         pizzaCookingState.getIsCooking().equals(false)) {
                     return pizzaCookingState;
                 }
@@ -53,7 +53,7 @@ public class CookingInfoFinder {
             List<PizzaCookingState> pizzaCookingStates = entry.getValue();
 
             for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if (pizzaCookingState.getCurrStage() != PizzaStage.Completed &&
+                if (pizzaCookingState.getNextStage() != PizzaStage.Completed &&
                         pizzaCookingState.getIsCooking().equals(false)) {
                     return pizzaCookingState;
                 }

@@ -107,7 +107,7 @@ public class SpecializedCookingManager implements ICookingManager {
     private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
-            Cook cook = cookingInfoFinder.findAvailableCook(cooks, pizzaCookingState.getCurrStage());
+            Cook cook = cookingInfoFinder.findAvailableCook(cooks, pizzaCookingState.getNextStage());
             if(cook == null){
                 return;
             }
@@ -121,7 +121,7 @@ public class SpecializedCookingManager implements ICookingManager {
 
     private ICookTask createCookTask(PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getCurrStage()),
+                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {

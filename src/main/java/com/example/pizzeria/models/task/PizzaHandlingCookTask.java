@@ -20,12 +20,11 @@ public class PizzaHandlingCookTask implements ICookTask {
         try {
             cook.setStatus(CookStatus.BUSY);
             pizzaCookingState.setIsCooking(true);
-
+            handlePizza();
             Thread.sleep(executionTime);
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getRecipe());
-            handlePizza();
             pizzaCookingState.setIsCooking(false);
             cook.setStatus(CookStatus.FREE);
             callback.onTaskCompleted(cook);
@@ -42,7 +41,7 @@ public class PizzaHandlingCookTask implements ICookTask {
                     (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
             return;
         }
-        var nextPizzaStage = pizzaCookingState.getCurrStage().getNext();
+        var nextPizzaStage = pizzaCookingState.getNextStage();
         pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
     }
 }
