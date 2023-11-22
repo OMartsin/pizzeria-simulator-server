@@ -31,6 +31,6 @@ public class KitchenStateService {
                     orderMapper.mapOrders(universalCookingManager.getOrders())
             );
         else
-            return null;
+            throw new RuntimeException("Simulation not started");
     }
 }
