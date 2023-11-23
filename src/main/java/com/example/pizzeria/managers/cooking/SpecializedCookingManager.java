@@ -7,13 +7,13 @@ import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.cook.Cook;
+import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -84,6 +84,7 @@ public class SpecializedCookingManager implements ICookingManager {
             for (Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
                     cook.resumeCook();
+                    giveNewTaskToCook(cook);
                     publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
                     return;
                 }
@@ -128,7 +129,9 @@ public class SpecializedCookingManager implements ICookingManager {
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
-                        giveNewTaskToCook(cook);
+                        if(cook.getStatus().equals(CookStatus.FREE)){
+                            giveNewTaskToCook(cook);
+                        }
                         if(pizzaCookingState.getCurrStage() != PizzaStage.Completed) {
                             handleNewOrderTasks(List.of(pizzaCookingState));
                         }

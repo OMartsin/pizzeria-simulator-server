@@ -7,6 +7,7 @@ import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
+import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
@@ -71,6 +72,7 @@ public class UniversalCookingManager implements ICookingManager {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.resumeCook();
+                giveNewTaskToCook(cook);
                 publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
             }
         }
@@ -113,13 +115,19 @@ public class UniversalCookingManager implements ICookingManager {
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
-                        if(!pizzaCookingState.getCurrStage().equals(PizzaStage.Completed)) {
+                        if(!pizzaCookingState.getCurrStage().equals(PizzaStage.Completed) &&
+                                cook.getStatus().equals(CookStatus.FREE)) {
                             cook.addTask(createCookTask(cook, pizzaCookingState));
                         }
                         else {
                             cooks.put(cook, null);
                             checkIsOrderCompleted();
-                            giveNewTaskToCook(cook);
+                            if(cook.getStatus().equals(CookStatus.FREE)){
+                                giveNewTaskToCook(cook);
+                            }
+                            else{
+                                handleNewOrderTasks(List.of(pizzaCookingState));
+                            }
                         }
                     }
                 });

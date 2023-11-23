@@ -35,20 +35,18 @@ public class Cook extends Thread {
     @Override
     public void run() {
         while (true) {
-            synchronized (lock) {
-                while (status == CookStatus.PAUSED) {
-                    try {
-                        lock.wait(); // Wait until resumeThread() is called
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            while (status == CookStatus.PAUSED) {
                 try {
-                    ICookTask task = tasksQueue.take();
-                    task.execute(this);
-                } catch (Exception e) {
+                    lock.wait(); // Wait until resumeThread() is called
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                ICookTask task = tasksQueue.take();
+                task.execute(this);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -62,9 +60,9 @@ public class Cook extends Thread {
     }
 
     public void resumeCook() {
+        this.status = CookStatus.FREE;
         synchronized (lock) {
-            this.status = CookStatus.FREE;
-            lock.notifyAll(); // Notify the thread to resume
+            lock.notifyAll();
         }
     }
 }
