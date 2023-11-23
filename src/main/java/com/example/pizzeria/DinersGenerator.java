@@ -65,7 +65,7 @@ public class DinersGenerator {
         List<Recipe> tempList = new ArrayList<>(menu);
         Collections.shuffle(tempList, new Random()); // Shuffle the list randomly
         Faker faker = new Faker();
-        return new Diner(faker.name().fullName(), new Order(tempList.subList(0,random), null));
+        return new Diner(faker.name().fullName(), new Order(null, tempList.subList(0,random), null));
     }
 
 }

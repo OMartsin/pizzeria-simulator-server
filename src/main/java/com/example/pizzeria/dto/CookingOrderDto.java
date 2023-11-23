@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class CookingOrderDto {
     private PizzaCookingState pizzaCookingState;
-    private int toppingId;
-    private int cookId;
-    private int orderId;
+    private Integer toppingId;
+    private Integer cookId;
+    private Integer orderId;
 
-    public CookingOrderDto(PizzaCookingState pizzaCookingState, int toppingId, int cookId, int orderId) {
+    public CookingOrderDto(PizzaCookingState pizzaCookingState, Integer toppingId, Integer cookId, Integer orderId) {
         this.toppingId = toppingId;
         this.cookId = cookId;
         this.orderId = orderId;

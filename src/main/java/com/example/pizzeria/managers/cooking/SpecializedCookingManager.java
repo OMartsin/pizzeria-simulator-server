@@ -11,14 +11,17 @@ import com.example.pizzeria.models.cook.CookStatus;
 import com.example.pizzeria.models.task.ICookTask;
 import com.example.pizzeria.models.task.ITaskCallback;
 import com.example.pizzeria.models.task.PizzaHandlingCookTask;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
+@Getter
 @Service
 public class SpecializedCookingManager implements ICookingManager {
     @Autowired
@@ -26,13 +29,14 @@ public class SpecializedCookingManager implements ICookingManager {
 
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
-    private Map<PizzaStage, List<Cook>> cooks;
+    private Map<PizzaStage, List<Cook>> cookPerStage;
+    private Map<Cook, PizzaCookingState> cooks;
     private final CookingInfoFinder cookingInfoFinder;
     private final StageExecutionTimeCalculator stageExecutionTimeCalculator;
 
     public void init() {
         orders = new HashMap<>();
-        cooks = new HashMap<>();
+        cookPerStage = new HashMap<>();
         for(var cooksMapItem : config.getCooksPerStage().entrySet()) {
             List<Cook> tempCooks = new ArrayList<>();
             for(int i = 0; i < cooksMapItem.getValue(); i++) {
@@ -40,14 +44,22 @@ public class SpecializedCookingManager implements ICookingManager {
                 tempCooks.add(cook);
                 cook.start();
             }
-            cooks.put(cooksMapItem.getKey(), tempCooks);
+            cookPerStage.put(cooksMapItem.getKey(), tempCooks);
             System.out.println("Cooking stage: " + cooksMapItem.getKey() + " cooks: ");
             tempCooks.forEach(cook -> System.out.println(cook.getCookName()));
         }
+        cooks = new HashMap<>(){
+            {
+                for(var cooksMapItem : cookPerStage.entrySet()) {
+                    for(var cook : cooksMapItem.getValue()) {
+                        put(cook, null);
+                    }
+                }
+            }
+        };
     }
 
     @Override
-
     public void acceptOrder(Order order) {
         try {
             orders.put(order, order.getRecipes().stream().map(recipe ->
@@ -65,9 +77,8 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     @Override
-
     public void pauseCook(Integer cookId) {
-        for (List<Cook> cooks : cooks.values()) {
+        for (List<Cook> cooks : cookPerStage.values()) {
             for(Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
                     cook.pauseCook();
@@ -80,7 +91,7 @@ public class SpecializedCookingManager implements ICookingManager {
 
     @Override
     public void resumeCook(Integer cookId) {
-        for (List<Cook> cooks : cooks.values()) {
+        for (List<Cook> cooks : cookPerStage.values()) {
             for (Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
                     cook.resumeCook();
@@ -93,7 +104,7 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     private void giveNewTaskToCook(Cook cook) {
-        PizzaStage pizzaStage = cookingInfoFinder.findPizzaStageByCook(cooks, cook).orElse(null);
+        PizzaStage pizzaStage = cookingInfoFinder.findPizzaStageByCook(cookPerStage, cook).orElse(null);
         if(pizzaStage == null) {
             return;
         }
@@ -104,6 +115,7 @@ public class SpecializedCookingManager implements ICookingManager {
         ICookTask task = createCookTask(pizzaCookingState);
         pizzaCookingState.setIsCooking(true);
         cook.addTask(task);
+        cooks.put(cook, pizzaCookingState);
 
         publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
@@ -111,13 +123,14 @@ public class SpecializedCookingManager implements ICookingManager {
     private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
-            Cook cook = cookingInfoFinder.findAvailableCook(cooks, pizzaCookingState.getCurrStage());
+            Cook cook = cookingInfoFinder.findAvailableCook(cookPerStage, pizzaCookingState.getNextStage());
             if(cook == null){
                 return;
             }
             ICookTask task = createCookTask(pizzaCookingState);
             pizzaCookingState.setIsCooking(true);
             cook.addTask(task);
+            cooks.put(cook, pizzaCookingState);
 
             publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
         }
@@ -125,17 +138,19 @@ public class SpecializedCookingManager implements ICookingManager {
 
     private ICookTask createCookTask(PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getCurrStage()),
+                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
                         if(cook.getStatus().equals(CookStatus.FREE)){
                             giveNewTaskToCook(cook);
                         }
-                        if(pizzaCookingState.getCurrStage() != PizzaStage.Completed) {
+                        if(pizzaCookingState.getNextStage() != PizzaStage.Completed) {
                             handleNewOrderTasks(List.of(pizzaCookingState));
                         }
-                        else{
+                        else {
+                            pizzaCookingState.setCurrStage(PizzaStage.Completed);
+                            pizzaCookingState.setCompletedAt(LocalDateTime.now());
                             checkIsOrderCompleted();
                         }
                     }

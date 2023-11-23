@@ -50,7 +50,7 @@ public class NetworkEventListener implements UpdateEventListener{
         ServiceOrderDto dto = new ServiceOrderDto(
                 Long.valueOf(order.getId()),
                 Long.valueOf(cashRegister.getId()),
-                order.getCreatedAt(),
+                order.getOrderTime(),
                 orderPizzaDtos,
                 dinerDto
                 );
@@ -68,9 +68,9 @@ public class NetworkEventListener implements UpdateEventListener{
     private void handleCookingOrderUpdateEvent(CookingOrderUpdateEvent event) {
         String destination = "/topic/cookingOrderUpdate";
         PizzaCookingState pizzaCookingState = event.getPizzaCookingState();
-        int toppingId = pizzaCookingState.getCurrToppingIndex();
-        int cookId = event.getCook().getCookId();
-        int orderId = pizzaCookingState.getOrderId();
+        Integer toppingId = pizzaCookingState.getCurrToppingIndex();
+        Integer cookId = event.getCook().getCookId();
+        Integer orderId = pizzaCookingState.getOrderId();
 
         // Create a CookingOrderDto with relevant information
         CookingOrderDto dto = new CookingOrderDto(pizzaCookingState, toppingId, cookId, orderId);
