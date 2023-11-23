@@ -19,7 +19,7 @@ public class Diner {
     public Diner(String name, Order order) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.name = name;
-        order.setDinnerId(this.id);
+        order.setDiner(this);
         this.order = order;
     }
 
