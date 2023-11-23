@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -27,19 +26,14 @@ public class NetworkEventListener implements UpdateEventListener{
     @Override
     @EventListener
     public void update(UpdateEvent event) {
-        switch (event) {
-            case ServiceOrderUpdateEvent e ->  {
-                handleServiceOrderUpdateEvent((ServiceOrderUpdateEvent) e);
-            }
-            case PausedCookUpdateEvent e -> {
-                handlePausedCookUpdateEvent((PausedCookUpdateEvent) e);
-            }
-            case CookingOrderUpdateEvent e -> {
-                handleCookingOrderUpdateEvent((CookingOrderUpdateEvent) e);
-            }
-            default -> {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported UpdateEvent type");
-            }
+        if (event instanceof ServiceOrderUpdateEvent) {
+            handleServiceOrderUpdateEvent((ServiceOrderUpdateEvent) event);
+        } else if (event instanceof PausedCookUpdateEvent) {
+            handlePausedCookUpdateEvent((PausedCookUpdateEvent) event);
+        } else if (event instanceof CookingOrderUpdateEvent) {
+            handleCookingOrderUpdateEvent((CookingOrderUpdateEvent) event);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported UpdateEvent type");
         }
     }
 
@@ -54,8 +48,8 @@ public class NetworkEventListener implements UpdateEventListener{
                         recipe.getId()))
                 .toList();
         ServiceOrderDto dto = new ServiceOrderDto(
-                order.getId(),
-                cashRegister.getId(),
+                Long.valueOf(order.getId()),
+                Long.valueOf(cashRegister.getId()),
                 order.getCreatedAt(),
                 orderPizzaDtos,
                 dinerDto
