@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +19,7 @@ public class SimulationController {
     private final ISimulationService simulationService;
     private final Initializer initializer;
 
-    @GetMapping("start")
+    @PostMapping("start")
     @Operation(summary = "Start the simulation")
     public ResponseEntity<Map<String, String>> start() throws IllegalStateException {
         initializer.init();
@@ -34,7 +31,7 @@ public class SimulationController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("pause")
+    @PostMapping("pause")
     @Operation(summary = "Pause the simulation")
     public ResponseEntity<Map<String, String>> pause() throws IllegalStateException {
         boolean paused = simulationService.pause();

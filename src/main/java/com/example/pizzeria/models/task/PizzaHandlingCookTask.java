@@ -7,6 +7,7 @@ import com.example.pizzeria.models.cook.CookStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -20,12 +21,11 @@ public class PizzaHandlingCookTask implements ICookTask {
         try {
             cook.setStatus(CookStatus.BUSY);
             pizzaCookingState.setIsCooking(true);
-
+            handlePizza();
             Thread.sleep(executionTime);
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getRecipe());
-            handlePizza();
             pizzaCookingState.setIsCooking(false);
             cook.setStatus(CookStatus.FREE);
             callback.onTaskCompleted(cook);
@@ -37,12 +37,20 @@ public class PizzaHandlingCookTask implements ICookTask {
 
     private void handlePizza(){
         if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && (pizzaCookingState.getCurrToppingIndex() == null ||
-                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size())) {
+                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size() - 1)) {
             pizzaCookingState.setCurrToppingIndex
                     (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
             return;
         }
-        var nextPizzaStage = pizzaCookingState.getCurrStage().getNext();
+        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && pizzaCookingState.getCurrToppingIndex() ==
+                pizzaCookingState.getRecipe().getToppings().size() - 1) {
+            pizzaCookingState.setCurrToppingIndex(null);
+        }
+        var nextPizzaStage = pizzaCookingState.getNextStage();
         pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
+        if(pizzaCookingState.getCurrStage() == PizzaStage.Completed) {
+            var time = pizzaCookingState.getCompletedAt() != null ? pizzaCookingState.getCompletedAt() : LocalDateTime.now();
+            pizzaCookingState.setCompletedAt(time);
+        }
     }
 }
