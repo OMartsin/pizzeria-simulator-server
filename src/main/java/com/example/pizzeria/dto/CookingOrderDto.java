@@ -1,21 +1,16 @@
 package com.example.pizzeria.dto;
 
-import com.example.pizzeria.models.PizzaCookingState;
+import com.example.pizzeria.models.PizzaStage;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class CookingOrderDto {
-    private PizzaCookingState pizzaCookingState;
+    private PizzaStage currentStage;
     private Integer toppingId;
     private Integer cookId;
     private Integer orderId;
-
-    public CookingOrderDto(PizzaCookingState pizzaCookingState, Integer toppingId, Integer cookId, Integer orderId) {
-        this.toppingId = toppingId;
-        this.cookId = cookId;
-        this.orderId = orderId;
-        this.pizzaCookingState = pizzaCookingState;
-    }
 }
