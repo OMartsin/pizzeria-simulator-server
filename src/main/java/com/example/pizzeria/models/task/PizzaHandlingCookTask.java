@@ -9,6 +9,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @Getter
@@ -22,7 +23,7 @@ public class PizzaHandlingCookTask implements ICookTask {
             cook.setStatus(CookStatus.BUSY);
             pizzaCookingState.setIsCooking(true);
             handlePizza();
-            Thread.sleep(executionTime);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(executionTime));
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getRecipe());

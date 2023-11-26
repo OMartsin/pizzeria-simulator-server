@@ -13,7 +13,7 @@ public class ServiceOrderDto {
     private Long id;
     private Long cashRegisterId;
     private LocalDateTime createdAt;
-    private List<OrderPizzaDto> orderPizza;
-    private DinerDto dinner;
+    private List<OrderPizzaDto> orderPizzas;
+    private DinerDto diner;
 
 }
