@@ -33,4 +33,10 @@ public class PizzaCookingState {
         }
         return this.currStage.getNext();
     }
+
+    public String getCurrentTopping() {
+        if(currToppingIndex == null)
+            return null;
+        return recipe.getToppings().get(currToppingIndex);
+    }
 }

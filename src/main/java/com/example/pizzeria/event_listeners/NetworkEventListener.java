@@ -68,12 +68,14 @@ public class NetworkEventListener implements UpdateEventListener{
     private void handleCookingOrderUpdateEvent(CookingOrderUpdateEvent event) {
         String destination = "/topic/cookingOrderUpdate";
         PizzaCookingState pizzaCookingState = event.getPizzaCookingState();
-        Integer toppingId = pizzaCookingState.getCurrToppingIndex();
+        String topping = pizzaCookingState.getCurrentTopping();
         Integer cookId = event.getCook().getCookId();
         Integer orderId = pizzaCookingState.getOrderId();
 
         // Create a CookingOrderDto with relevant information
-        CookingOrderDto dto = new CookingOrderDto(pizzaCookingState.getCurrStage(), toppingId, cookId, orderId);
+        CookingOrderDto dto = new CookingOrderDto
+                (pizzaCookingState.getCurrStage(), topping, cookId, orderId,
+                        pizzaCookingState.getId(), pizzaCookingState.getCompletedAt());
 
         messagingTemplate.convertAndSend(destination, dto);
     }
