@@ -35,7 +35,7 @@ public class Cook extends Thread {
     @Override
     public void run() {
         while (true) {
-            while (status == CookStatus.PAUSED) {
+            while (status == CookStatus.PAUSED && tasksQueue.isEmpty()) {
                 try {
                     lock.wait(); // Wait until resumeThread() is called
                 } catch (InterruptedException e) {
@@ -48,6 +48,7 @@ public class Cook extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
     }
 
@@ -56,7 +57,7 @@ public class Cook extends Thread {
     }
 
     public void pauseCook() {
-        this.status = CookStatus.PAUSED;
+            this.status = CookStatus.PAUSED;
     }
 
     public void resumeCook() {

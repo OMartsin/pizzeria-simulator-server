@@ -1,6 +1,8 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.dto.CookingOrderDto;
+import com.example.pizzeria.dto.PauseCookDto;
 import com.example.pizzeria.events.CookingOrderUpdateEvent;
 import com.example.pizzeria.events.PausedCookUpdateEvent;
 import com.example.pizzeria.models.Order;
@@ -15,6 +17,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,8 @@ import java.util.*;
 public class UniversalCookingManager implements ICookingManager {
     @Autowired
     ApplicationEventPublisher publisher;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
@@ -65,7 +70,7 @@ public class UniversalCookingManager implements ICookingManager {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.pauseCook();
-                publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
+                    publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
             }
         }
     }
@@ -113,6 +118,19 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
+        if(cook.getStatus().equals(CookStatus.PAUSED)) {
+            messagingTemplate.convertAndSend("/topic/pausedCookUpdate", new PauseCookDto(cook.getCookId(),
+                    cook.getStatus()) );
+            messagingTemplate.convertAndSend("/topic/cookingOrderUpdate", new CookingOrderDto
+                    (pizzaCookingState.getCurrStage(), pizzaCookingState.getCurrentTopping(), cook.getCookId(),
+                            pizzaCookingState.getOrderId(), pizzaCookingState.getId(), pizzaCookingState.getCompletedAt()));
+
+            if(pizzaCookingState.getCompletedAt() == null) {
+                List<PizzaCookingState> list = new ArrayList<>();
+                list.add(pizzaCookingState);
+                handleNewOrderTasks(list);
+            }
+        }
         return new PizzaHandlingCookTask(
                 cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {

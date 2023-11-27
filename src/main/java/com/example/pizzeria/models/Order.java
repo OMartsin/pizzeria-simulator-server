@@ -24,5 +24,4 @@ public class Order {
         this.diner = dinner;
         this.orderTime = LocalDateTime.now();
     }
-
 }

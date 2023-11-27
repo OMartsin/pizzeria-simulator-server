@@ -61,7 +61,7 @@ public class NetworkEventListener implements UpdateEventListener{
         String destination = "/topic/pausedCookUpdate";
 
         // Create a PauseCookDto with the cookId
-        PauseCookDto dto = new PauseCookDto(event.getCook().getCookId());
+        PauseCookDto dto = new PauseCookDto(event.getCook().getCookId(), event.getCook().getStatus());
         messagingTemplate.convertAndSend(destination, dto);
     }
 
