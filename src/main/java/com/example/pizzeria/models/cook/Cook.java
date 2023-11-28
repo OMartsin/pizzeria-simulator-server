@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 public class Cook extends Thread {
     private static AtomicInteger ID_GENERATOR = new AtomicInteger();
-    private final Object lock = new Object();
     private final Integer cookId;
     private final String cookName;
     private CookStatus status;
@@ -35,20 +34,12 @@ public class Cook extends Thread {
     @Override
     public void run() {
         while (true) {
-            while (status == CookStatus.PAUSED && tasksQueue.isEmpty()) {
-                try {
-                    lock.wait(); // Wait until resumeThread() is called
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             try {
                 ICookTask task = tasksQueue.take();
                 task.execute(this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -57,13 +48,10 @@ public class Cook extends Thread {
     }
 
     public void pauseCook() {
-            this.status = CookStatus.PAUSED;
+        this.status = CookStatus.PAUSED;
     }
 
     public void resumeCook() {
         this.status = CookStatus.FREE;
-        synchronized (lock) {
-            lock.notifyAll();
-        }
     }
 }

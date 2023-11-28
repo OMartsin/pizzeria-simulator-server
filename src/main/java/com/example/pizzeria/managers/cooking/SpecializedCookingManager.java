@@ -1,6 +1,8 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
+import com.example.pizzeria.dto.CookingOrderDto;
+import com.example.pizzeria.dto.PauseCookDto;
 import com.example.pizzeria.events.CookingOrderUpdateEvent;
 import com.example.pizzeria.events.PausedCookUpdateEvent;
 import com.example.pizzeria.models.Order;
@@ -15,6 +17,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,8 @@ import java.util.*;
 public class SpecializedCookingManager implements ICookingManager {
     @Autowired
     ApplicationEventPublisher publisher;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     private final PizzeriaConfig config;
     private Map<Order, List<PizzaCookingState>> orders;
@@ -81,7 +86,7 @@ public class SpecializedCookingManager implements ICookingManager {
         for (List<Cook> cooks : cookPerStage.values()) {
             for(Cook cook : cooks) {
                 if (cook.getCookId().equals(cookId)) {
-                    cook.pauseCook();
+                    cook.pauseCook(); //cook status == Paused
                     publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
                     return;
                 }
@@ -112,7 +117,7 @@ public class SpecializedCookingManager implements ICookingManager {
         if(pizzaCookingState == null) {
             return;
         }
-        ICookTask task = createCookTask(pizzaCookingState);
+        ICookTask task = createCookTask(pizzaCookingState, cook);
         pizzaCookingState.setIsCooking(true);
         cook.addTask(task);
         cooks.put(cook, pizzaCookingState);
@@ -127,7 +132,7 @@ public class SpecializedCookingManager implements ICookingManager {
             if(cook == null){
                 return;
             }
-            ICookTask task = createCookTask(pizzaCookingState);
+            ICookTask task = createCookTask(pizzaCookingState, cook);
             pizzaCookingState.setIsCooking(true);
             cook.addTask(task);
             cooks.put(cook, pizzaCookingState);
@@ -136,12 +141,23 @@ public class SpecializedCookingManager implements ICookingManager {
         }
     }
 
-    private ICookTask createCookTask(PizzaCookingState pizzaCookingState){
+    private ICookTask createCookTask(PizzaCookingState pizzaCookingState, Cook cook){
         return new PizzaHandlingCookTask(
                 pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
+                        if(cook.getStatus().equals(CookStatus.PAUSED)) {
+                            messagingTemplate.convertAndSend("/topic/cookingOrderUpdate", new CookingOrderDto
+                                    (pizzaCookingState.getCurrStage(), pizzaCookingState.getCurrentTopping(), cook.getCookId(),
+                                            pizzaCookingState.getOrderId(), pizzaCookingState.getId(), pizzaCookingState.getCompletedAt()));
+
+                            if(pizzaCookingState.getCompletedAt() == null) {
+                                List<PizzaCookingState> list = new ArrayList<>();
+                                list.add(pizzaCookingState);
+                                handleNewOrderTasks(list);
+                            }
+                        }
                         if(cook.getStatus().equals(CookStatus.FREE)){
                             giveNewTaskToCook(cook);
                         }

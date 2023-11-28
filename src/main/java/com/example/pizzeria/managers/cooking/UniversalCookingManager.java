@@ -118,24 +118,22 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
-        if(cook.getStatus().equals(CookStatus.PAUSED)) {
-            messagingTemplate.convertAndSend("/topic/pausedCookUpdate", new PauseCookDto(cook.getCookId(),
-                    cook.getStatus()) );
-            messagingTemplate.convertAndSend("/topic/cookingOrderUpdate", new CookingOrderDto
-                    (pizzaCookingState.getCurrStage(), pizzaCookingState.getCurrentTopping(), cook.getCookId(),
-                            pizzaCookingState.getOrderId(), pizzaCookingState.getId(), pizzaCookingState.getCompletedAt()));
-
-            if(pizzaCookingState.getCompletedAt() == null) {
-                List<PizzaCookingState> list = new ArrayList<>();
-                list.add(pizzaCookingState);
-                handleNewOrderTasks(list);
-            }
-        }
         return new PizzaHandlingCookTask(
                 cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
+                        if(cook.getStatus().equals(CookStatus.PAUSED)) {
+                            messagingTemplate.convertAndSend("/topic/cookingOrderUpdate", new CookingOrderDto
+                                    (pizzaCookingState.getCurrStage(), pizzaCookingState.getCurrentTopping(), cook.getCookId(),
+                                            pizzaCookingState.getOrderId(), pizzaCookingState.getId(), pizzaCookingState.getCompletedAt()));
+
+                            if(pizzaCookingState.getCompletedAt() == null) {
+                                List<PizzaCookingState> list = new ArrayList<>();
+                                list.add(pizzaCookingState);
+                                handleNewOrderTasks(list);
+                            }
+                        }
                         if(!pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
                             if(cook.getStatus().equals(CookStatus.FREE)){
                                 cook.addTask(createCookTask(cook, pizzaCookingState));
