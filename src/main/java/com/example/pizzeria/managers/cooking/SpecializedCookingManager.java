@@ -67,8 +67,8 @@ public class SpecializedCookingManager implements ICookingManager {
     @Override
     public void acceptOrder(Order order) {
         try {
-            orders.put(order, order.getRecipes().stream().map(recipe ->
-                    new PizzaCookingState(recipe, order.getId())).toList());
+            orders.put(order, order.getOrderedItems().stream().map(ord ->
+                    new PizzaCookingState(ord, order.getId())).toList());
         }
         catch (Exception e){
             System.out.println("Error while accepting order");
@@ -77,7 +77,7 @@ public class SpecializedCookingManager implements ICookingManager {
         }
         System.out.println("Order " + order.getId() + " accepted");
         System.out.println("Pizzas: ");
-        order.getRecipes().forEach(recipe -> System.out.println(recipe.getName()));
+        order.getOrderedItems().forEach(orderedItem -> System.out.println(orderedItem.getRecipe().getName()));
         handleNewOrderTasks(orders.get(order));
     }
 
@@ -150,7 +150,7 @@ public class SpecializedCookingManager implements ICookingManager {
                         if(cook.getStatus().equals(CookStatus.PAUSED)) {
                             messagingTemplate.convertAndSend("/topic/cookingOrderUpdate", new CookingOrderDto
                                     (pizzaCookingState.getCurrStage(), pizzaCookingState.getCurrentTopping(), cook.getCookId(),
-                                            pizzaCookingState.getOrderId(), pizzaCookingState.getId(), pizzaCookingState.getCompletedAt()));
+                                            pizzaCookingState.getOrderId(), pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt()));
 
                             if(pizzaCookingState.getCompletedAt() == null) {
                                 List<PizzaCookingState> list = new ArrayList<>();

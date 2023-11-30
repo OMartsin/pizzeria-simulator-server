@@ -26,7 +26,7 @@ public class PizzaHandlingCookTask implements ICookTask {
             Thread.sleep(TimeUnit.SECONDS.toMillis(executionTime));
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
-                    pizzaCookingState.getRecipe());
+                    pizzaCookingState.getOrderedItem().getRecipe());
             pizzaCookingState.setIsCooking(false);
             if(cook.getStatus().equals(CookStatus.BUSY)) {
                 cook.setStatus(CookStatus.FREE);
@@ -40,13 +40,13 @@ public class PizzaHandlingCookTask implements ICookTask {
 
     private void handlePizza(){
         if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && (pizzaCookingState.getCurrToppingIndex() == null ||
-                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size() - 1)) {
+                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1)) {
             pizzaCookingState.setCurrToppingIndex
                     (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
             return;
         }
         if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && pizzaCookingState.getCurrToppingIndex() ==
-                pizzaCookingState.getRecipe().getToppings().size() - 1) {
+                pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1) {
             pizzaCookingState.setCurrToppingIndex(null);
         }
         var nextPizzaStage = pizzaCookingState.getNextStage();

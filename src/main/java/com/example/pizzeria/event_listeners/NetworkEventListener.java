@@ -43,9 +43,9 @@ public class NetworkEventListener implements UpdateEventListener{
         CashRegister cashRegister = event.getCashRegister();
         Order order = event.getOrder();
         DinerDto dinerDto = new DinerDto(order.getDiner().getId(), order.getDiner().getName());
-        List<OrderPizzaDto> orderPizzaDtos = order.getRecipes().stream()
-                .map(recipe -> new OrderPizzaDto(recipe.getId(), order.getId(),
-                        recipe.getId()))
+        List<OrderPizzaDto> orderPizzaDtos = order.getOrderedItems().stream()
+                .map(orderedItem -> new OrderPizzaDto(orderedItem.getId(), order.getId(),
+                        orderedItem.getRecipe().getId()))
                 .toList();
         ServiceOrderDto dto = new ServiceOrderDto(
                 Long.valueOf(order.getId()),
@@ -75,7 +75,7 @@ public class NetworkEventListener implements UpdateEventListener{
         // Create a CookingOrderDto with relevant information
         CookingOrderDto dto = new CookingOrderDto
                 (pizzaCookingState.getCurrStage(), topping, cookId, orderId,
-                        pizzaCookingState.getId(), pizzaCookingState.getCompletedAt());
+                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt());
 
         messagingTemplate.convertAndSend(destination, dto);
     }

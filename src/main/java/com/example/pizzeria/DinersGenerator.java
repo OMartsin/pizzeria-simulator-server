@@ -4,6 +4,7 @@ import com.example.pizzeria.managers.cashregister.CashRegisterManager;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.models.Diner;
 import com.example.pizzeria.models.Order;
+import com.example.pizzeria.models.OrderedItem;
 import com.example.pizzeria.models.Recipe;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -64,8 +66,14 @@ public class DinersGenerator {
         int random = (int) (Math.random() * menu.size() - 1) + 1;
         List<Recipe> tempList = new ArrayList<>(menu);
         Collections.shuffle(tempList, new Random()); // Shuffle the list randomly
+
+        List<OrderedItem> orderedItems = tempList.subList(0, random)
+                .stream()
+                .map(OrderedItem::new)
+                .collect(Collectors.toList());
+
         Faker faker = new Faker();
-        return new Diner(faker.name().fullName(), new Order(null, tempList.subList(0,random), null));
+        return new Diner(faker.name().fullName(), new Order(null, orderedItems, null));
     }
 
 }
