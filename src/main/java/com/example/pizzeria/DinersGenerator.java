@@ -38,7 +38,6 @@ public class DinersGenerator {
             for (int i = 0; i < pizzeriaConfig.getDinerArrivalConfig().getQuantity(); ++i) {
                 Diner newDiner = generateDinner(pizzeriaConfig.getMenu());
                 cashRegisterManager.acceptDinner(newDiner);
-                //System.out.println("Dinner " + newDinner.name() +  " order" + newDinner.order());
             }
 
         };

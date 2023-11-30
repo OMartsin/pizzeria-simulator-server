@@ -3,12 +3,12 @@ package com.example.pizzeria.models.task;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
-import com.example.pizzeria.models.cook.CookStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @Getter
@@ -19,15 +19,16 @@ public class PizzaHandlingCookTask implements ICookTask {
 
     public void execute(Cook cook) {
         try {
-            cook.setStatus(CookStatus.BUSY);
+            cook.setBusy();
             pizzaCookingState.setIsCooking(true);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(executionTime));
             handlePizza();
-            Thread.sleep(executionTime);
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
-                    pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
+                    pizzaCookingState.getCurrCookingStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getRecipe());
             pizzaCookingState.setIsCooking(false);
-            cook.setStatus(CookStatus.FREE);
+            cook.setFree();
+            pizzaCookingState.setWaitingPizzaStage();
             callback.onTaskCompleted(cook);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -36,19 +37,24 @@ public class PizzaHandlingCookTask implements ICookTask {
     }
 
     private void handlePizza(){
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && (pizzaCookingState.getCurrToppingIndex() == null ||
-                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getRecipe().getToppings().size() - 1)) {
-            pizzaCookingState.setCurrToppingIndex
-                    (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
+        if(pizzaCookingState.getNextStage().equals(PizzaStage.Topping)) {
+            pizzaCookingState.setCurrCookingStage(PizzaStage.Topping);
+            pizzaCookingState.setCurrToppingIndex(0);
             return;
         }
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && pizzaCookingState.getCurrToppingIndex() ==
-                pizzaCookingState.getRecipe().getToppings().size() - 1) {
-            pizzaCookingState.setCurrToppingIndex(null);
+        if(pizzaCookingState.getCurrCookingStage() == PizzaStage.Topping) {
+            if(pizzaCookingState.getCurrToppingIndex() <
+                    pizzaCookingState.getRecipe().getToppings().size() - 1){
+                pizzaCookingState.setCurrToppingIndex(pizzaCookingState.getCurrToppingIndex() + 1);
+            }
+            else {
+                pizzaCookingState.setCurrToppingIndex(null);
+            }
+
         }
         var nextPizzaStage = pizzaCookingState.getNextStage();
-        pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Completed) {
+        pizzaCookingState.setCurrCookingStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
+        if(pizzaCookingState.getCurrCookingStage() == PizzaStage.Completed) {
             var time = pizzaCookingState.getCompletedAt() != null ? pizzaCookingState.getCompletedAt() : LocalDateTime.now();
             pizzaCookingState.setCompletedAt(time);
         }

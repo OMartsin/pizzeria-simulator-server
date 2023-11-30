@@ -2,17 +2,13 @@ package com.example.pizzeria.models.cook;
 
 import com.example.pizzeria.models.task.ICookTask;
 import lombok.Getter;
-import lombok.Setter;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-@Setter
 public class Cook extends Thread {
     private static AtomicInteger ID_GENERATOR = new AtomicInteger();
-    private final Object lock = new Object();
     private final Integer cookId;
     private final String cookName;
     private CookStatus status;
@@ -35,20 +31,11 @@ public class Cook extends Thread {
     @Override
     public void run() {
         while (true) {
-            synchronized (lock) {
-                while (status == CookStatus.PAUSED) {
-                    try {
-                        lock.wait(); // Wait until resumeThread() is called
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                try {
-                    ICookTask task = tasksQueue.take();
-                    task.execute(this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                ICookTask task = tasksQueue.take();
+                task.execute(this);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -62,9 +49,16 @@ public class Cook extends Thread {
     }
 
     public void resumeCook() {
-        synchronized (lock) {
-            this.status = CookStatus.FREE;
-            lock.notifyAll(); // Notify the thread to resume
-        }
+        this.status = CookStatus.FREE;
+    }
+
+    public void setBusy() {
+        this.status = CookStatus.BUSY;
+    }
+
+    public void setFree() {
+         if(this.status.equals(CookStatus.BUSY)) {
+             this.status = CookStatus.FREE;
+         }
     }
 }

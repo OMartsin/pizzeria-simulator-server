@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
 public interface OrderMapper {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
+    @Mapping(target = "createdAt", source = "order.orderTime")
     @Mapping(target = "orderPizzas", source = "pizzaCookingStates")
     OrderDto toOrderDto(Order order, List<PizzaCookingState> pizzaCookingStates);
 
     @IterableMapping(elementTargetType = PizzaCookingStateDto.class)
     List<PizzaCookingStateDto> mapPizzaCookingStateList(List<PizzaCookingState> pizzaCookingStates);
+
 
     default List<OrderDto> mapOrders(Map<Order, List<PizzaCookingState>> orderMap) {
         return orderMap.entrySet().stream()
