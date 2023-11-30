@@ -13,7 +13,7 @@ public interface PizzaCookingStateMapper {
 
     @Mapping(target = "recipeId", source = "recipe.id")
     @Mapping(target = "currentTopping", expression = "java(getToppingName(state))")
-    @Mapping(target = "currentStage", source = "currStage")
+    @Mapping(target = "currentStage", source = "currPizzaStage")
     @Mapping(target = "completedAt", source = "completedAt")
     PizzaCookingStateDto toPizzaCookingStateDto(PizzaCookingState state);
 

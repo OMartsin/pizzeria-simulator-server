@@ -2,14 +2,11 @@ package com.example.pizzeria.models.cook;
 
 import com.example.pizzeria.models.task.ICookTask;
 import lombok.Getter;
-import lombok.Setter;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-@Setter
 public class Cook extends Thread {
     private static AtomicInteger ID_GENERATOR = new AtomicInteger();
     private final Integer cookId;
@@ -53,5 +50,15 @@ public class Cook extends Thread {
 
     public void resumeCook() {
         this.status = CookStatus.FREE;
+    }
+
+    public void setBusy() {
+        this.status = CookStatus.BUSY;
+    }
+
+    public void setFree() {
+         if(this.status.equals(CookStatus.BUSY)) {
+             this.status = CookStatus.FREE;
+         }
     }
 }
