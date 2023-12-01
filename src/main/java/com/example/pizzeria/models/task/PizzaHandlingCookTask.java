@@ -3,7 +3,6 @@ package com.example.pizzeria.models.task;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
-import com.example.pizzeria.models.cook.CookStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,17 +19,16 @@ public class PizzaHandlingCookTask implements ICookTask {
 
     public void execute(Cook cook) {
         try {
-            cook.setStatus(CookStatus.BUSY);
+            cook.setBusy();
             pizzaCookingState.setIsCooking(true);
-            handlePizza();
             Thread.sleep(TimeUnit.SECONDS.toMillis(executionTime));
-            System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
-                    pizzaCookingState.getCurrStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
+            handlePizza();
+                    pizzaCookingState.getCurrCookingStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
                     pizzaCookingState.getOrderedItem().getRecipe());
+          
             pizzaCookingState.setIsCooking(false);
-            if(cook.getStatus().equals(CookStatus.BUSY)) {
-                cook.setStatus(CookStatus.FREE);
-            }
+            cook.setFree();
+            pizzaCookingState.setWaitingPizzaStage();
             callback.onTaskCompleted(cook);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -38,20 +36,23 @@ public class PizzaHandlingCookTask implements ICookTask {
         }
     }
 
-    private void handlePizza(){
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && (pizzaCookingState.getCurrToppingIndex() == null ||
-                pizzaCookingState.getCurrToppingIndex() < pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1)) {
-            pizzaCookingState.setCurrToppingIndex
-                    (pizzaCookingState.getCurrToppingIndex() == null ? 0 : pizzaCookingState.getCurrToppingIndex() + 1);
+        if(pizzaCookingState.getNextStage().equals(PizzaStage.Topping)) {
+            pizzaCookingState.setCurrCookingStage(PizzaStage.Topping);
+            pizzaCookingState.setCurrToppingIndex(0);
             return;
         }
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Topping && pizzaCookingState.getCurrToppingIndex() ==
-                pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1) {
-            pizzaCookingState.setCurrToppingIndex(null);
+        if(pizzaCookingState.getCurrCookingStage() == PizzaStage.Topping) {
+            if(pizzaCookingState.getCurrToppingIndex() <
+                    pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1){
+                pizzaCookingState.setCurrToppingIndex(pizzaCookingState.getCurrToppingIndex() + 1);
+            }
+            else {
+                pizzaCookingState.setCurrToppingIndex(null);
+            }
         }
         var nextPizzaStage = pizzaCookingState.getNextStage();
-        pizzaCookingState.setCurrStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
-        if(pizzaCookingState.getCurrStage() == PizzaStage.Completed) {
+        pizzaCookingState.setCurrCookingStage(Objects.requireNonNullElse(nextPizzaStage, PizzaStage.Completed));
+        if(pizzaCookingState.getCurrCookingStage() == PizzaStage.Completed) {
             var time = pizzaCookingState.getCompletedAt() != null ? pizzaCookingState.getCompletedAt() : LocalDateTime.now();
             pizzaCookingState.setCompletedAt(time);
         }

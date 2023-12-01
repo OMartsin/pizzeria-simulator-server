@@ -74,8 +74,8 @@ public class NetworkEventListener implements UpdateEventListener{
 
         // Create a CookingOrderDto with relevant information
         CookingOrderDto dto = new CookingOrderDto
-                (pizzaCookingState.getCurrStage(), topping, cookId, orderId,
-                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt());
+                (pizzaCookingState.getCurrCookingStage(), topping, cookId, orderId,
+                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.g
 
         messagingTemplate.convertAndSend(destination, dto);
     }

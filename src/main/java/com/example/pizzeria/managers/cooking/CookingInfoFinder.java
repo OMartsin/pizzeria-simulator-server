@@ -15,6 +15,9 @@ import java.util.Optional;
 public class CookingInfoFinder {
     public Cook findAvailableCook(Map<PizzaStage, List<Cook>> cooks, PizzaStage pizzaStage) {
         List<Cook> tempCooksList = cooks.get(pizzaStage);
+        if(tempCooksList == null || tempCooksList.isEmpty()){
+            return null;
+        }
         System.out.println(pizzaStage);
         for (Cook cook : tempCooksList) {
             if (cook.getStatus().equals(CookStatus.FREE)) {
@@ -54,13 +57,13 @@ public class CookingInfoFinder {
             List<PizzaCookingState> pizzaCookingStates = entry.getValue();
 
             for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if(pizzaCookingState.getCurrStage() == null){
+                if(pizzaCookingState.getCurrCookingStage() == null){
                     if(pizzaCookingState.getIsCooking().equals(false)){
                         return pizzaCookingState;
                     }
                     continue;
                 }
-                if (!pizzaCookingState.getCurrStage().equals(PizzaStage.Completed) &&
+                if (!pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed) &&
                         !pizzaCookingState.getNextStage().equals(PizzaStage.Completed) &&
                          pizzaCookingState.getIsCooking().equals(false)) {
                     return pizzaCookingState;
@@ -83,7 +86,7 @@ public class CookingInfoFinder {
         for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
             List<PizzaCookingState> pizzaCookingStates = entry.getValue();
 
-            if(pizzaCookingStates.stream().allMatch(pizzaCookingState -> pizzaCookingState.getCurrStage() ==
+            if(pizzaCookingStates.stream().allMatch(pizzaCookingState -> pizzaCookingState.getCurrCookingStage() ==
                     PizzaStage.Completed)){
                     return entry.getKey();
             }
