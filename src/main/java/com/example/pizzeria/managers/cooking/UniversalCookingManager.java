@@ -117,6 +117,7 @@ public class UniversalCookingManager implements ICookingManager {
                 cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
+                    public void onTaskCompleted(Cook cook) {
                         handleCallback(pizzaCookingState, cook);
                     }
                 });

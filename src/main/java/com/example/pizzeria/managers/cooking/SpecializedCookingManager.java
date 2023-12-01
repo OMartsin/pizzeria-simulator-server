@@ -139,6 +139,7 @@ public class SpecializedCookingManager implements ICookingManager {
                 pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
+                    public void onTaskCompleted(Cook cook) {
                         handleCallback(pizzaCookingState, cook);
                     }
                 });
