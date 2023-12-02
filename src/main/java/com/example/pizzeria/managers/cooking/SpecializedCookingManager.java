@@ -156,14 +156,11 @@ public class SpecializedCookingManager implements ICookingManager {
         if(cook.getStatus().equals(CookStatus.PAUSED)) {
             publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
         }
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
-        if(pizzaCookingState.getCompletedAt() == null) {
-            handleNewOrderTasks(List.of(pizzaCookingState));
-        }
         if(cook.getStatus().equals(CookStatus.FREE)){
             findNewTaskToCook(cook);
         }
         handlePizzaComplete(pizzaCookingState);
+        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private void handlePizzaComplete(PizzaCookingState pizzaCookingState){

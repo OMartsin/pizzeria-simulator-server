@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -132,20 +133,21 @@ public class UniversalCookingManager implements ICookingManager {
 
     private void handleCallback(PizzaCookingState pizzaCookingState, Cook cook){
         cooks.put(cook, null);
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
         if(cook.getStatus().equals(CookStatus.PAUSED)) {
             publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
-            if(!pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed)) {
-                List<PizzaCookingState> list = new ArrayList<>();
-                list.add(pizzaCookingState);
-                handleNewOrderTasks(list);
+            if(pizzaCookingState.getCompletedAt() == null) {
+                handleNewOrderTasks(List.of(pizzaCookingState));
             }
         }
-        if(cook.getStatus().equals(CookStatus.FREE)){
+        if(pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
+            pizzaCookingState.setCurrCookingStage(PizzaStage.Completed);
+            pizzaCookingState.setCompletedAt(LocalDateTime.now());
+            checkIsOrderCompleted();
+
+        }
+        else if(cook.getStatus().equals(CookStatus.FREE)){
             cook.addTask(createCookTask(cook, pizzaCookingState));
         }
-        if(pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed)) {
-            checkIsOrderCompleted();
-        }
+        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 }
