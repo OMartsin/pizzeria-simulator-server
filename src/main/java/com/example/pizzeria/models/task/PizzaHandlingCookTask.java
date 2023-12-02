@@ -41,18 +41,16 @@ public class PizzaHandlingCookTask implements ICookTask {
             return;
         }
         if(pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Topping)) {
-            if(pizzaCookingState.getCurrToppingIndex() == null) {
-                pizzaCookingState.setCurrCookingStage(pizzaCookingState.getNextStage());
-                return;
-            }
             if(pizzaCookingState.getCurrToppingIndex() <
                     pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1) {
                 pizzaCookingState.setCurrToppingIndex(pizzaCookingState.getCurrToppingIndex() + 1);
+                return;
             }
-            else {
+            if(pizzaCookingState.getCurrToppingIndex() ==
+                    pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1) {
                 pizzaCookingState.setCurrToppingIndex(null);
             }
-            return;
+
         }
         if(pizzaCookingState.getNextStage().equals(PizzaStage.Topping)) {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Topping);

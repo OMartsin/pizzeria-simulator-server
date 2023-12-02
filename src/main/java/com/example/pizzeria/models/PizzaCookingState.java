@@ -29,7 +29,7 @@ public class PizzaCookingState {
             return PizzaStage.Dough;
         }
         if(currCookingStage.equals(PizzaStage.Topping)) {
-            if(currToppingIndex == null) {
+            if(currToppingIndex == null || currToppingIndex + 1 >= orderedItem.getRecipe().getToppings().size()) {
                 return this.currCookingStage.getNext();
             }
             else {
