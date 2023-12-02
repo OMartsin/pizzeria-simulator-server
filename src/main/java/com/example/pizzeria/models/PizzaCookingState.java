@@ -9,9 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 @Setter
 public class PizzaCookingState {
-    private static AtomicInteger ID_GENERATOR = new AtomicInteger();
-    private final Integer id;
-    private final Recipe recipe;
+    private final OrderedItem orderedItem;
     private final Integer orderId;
     private PizzaStage currCookingStage;
     private PizzaStage currPizzaStage;
@@ -19,9 +17,8 @@ public class PizzaCookingState {
     private LocalDateTime completedAt;
     private Boolean isCooking = false;
 
-    public PizzaCookingState(Recipe recipe, Integer orderId) {
-        this.id = ID_GENERATOR.getAndIncrement();
-        this.recipe = recipe;
+    public PizzaCookingState(OrderedItem orderedItem, Integer orderId) {
+        this.orderedItem = orderedItem;
         this.orderId = orderId;
         this.currCookingStage = null;
         this.currPizzaStage = PizzaStage.Waiting;
@@ -38,7 +35,7 @@ public class PizzaCookingState {
     public String getCurrentTopping() {
         if(currToppingIndex == null)
             return null;
-        return recipe.getToppings().get(currToppingIndex);
+        return orderedItem.getRecipe().getToppings().get(currToppingIndex);
     }
 
     public void setCookingPizzaStage() {

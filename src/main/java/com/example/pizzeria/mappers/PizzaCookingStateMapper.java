@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 public interface PizzaCookingStateMapper {
 
     PizzaCookingStateMapper INSTANCE = Mappers.getMapper(PizzaCookingStateMapper.class);
-
-    @Mapping(target = "recipeId", source = "recipe.id")
+    @Mapping(target = "id", source = "orderedItem.id")
+    @Mapping(target = "recipeId", source = "orderedItem.recipe.id")
     @Mapping(target = "currentTopping", expression = "java(getToppingName(state))")
     @Mapping(target = "currentStage", source = "currPizzaStage")
     @Mapping(target = "completedAt", source = "completedAt")
@@ -20,6 +20,6 @@ public interface PizzaCookingStateMapper {
     default String getToppingName(PizzaCookingState state) {
         if(state.getCurrToppingIndex() == null)
             return null;
-        return state.getRecipe().getToppings().get(state.getCurrToppingIndex());
+        return state.getOrderedItem().getRecipe().getToppings().get(state.getCurrToppingIndex());
     }
 }

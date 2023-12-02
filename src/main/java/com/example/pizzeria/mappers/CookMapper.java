@@ -29,7 +29,7 @@ public interface CookMapper {
                 .map(entry -> {
                     PizzaCookingState state = entry.getValue();
                     Integer orderId = state != null ? state.getOrderId() : null;
-                    Integer orderPizzaId = state != null ? state.getId() : null;
+                    Integer orderPizzaId = state != null ? state.getOrderedItem().getId() : null;
                     return toCookDto(entry.getKey(), null, orderId, orderPizzaId);
                 })
                 .collect(Collectors.toList());
@@ -42,7 +42,7 @@ public interface CookMapper {
                     PizzaCookingState state = entry.getValue();
                     PizzaStage specialization = findSpecializationForCook(entry.getKey(), stageCookMap);
                     Integer orderId = state != null ? state.getOrderId() : null;
-                    Integer orderPizzaId = state != null ? state.getId() : null;
+                    Integer orderPizzaId = state != null ? state.getOrderedItem().getId() : null;
                     return toCookDto(entry.getKey(), specialization, orderId, orderPizzaId);
                 })
                 .collect(Collectors.toList());

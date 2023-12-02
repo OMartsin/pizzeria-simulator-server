@@ -25,7 +25,7 @@ public class PizzaHandlingCookTask implements ICookTask {
             handlePizza();
             System.out.println(cook.getCookName() + " " + "has finished preparing pizza stage" +
                     pizzaCookingState.getCurrCookingStage() + " for order ID: " + pizzaCookingState.getOrderId() + " in " +
-                    pizzaCookingState.getRecipe());
+                    pizzaCookingState.getOrderedItem().getRecipe());
             pizzaCookingState.setIsCooking(false);
             cook.setFree();
             pizzaCookingState.setWaitingPizzaStage();
@@ -44,7 +44,7 @@ public class PizzaHandlingCookTask implements ICookTask {
         }
         if(pizzaCookingState.getCurrCookingStage() == PizzaStage.Topping) {
             if(pizzaCookingState.getCurrToppingIndex() <
-                    pizzaCookingState.getRecipe().getToppings().size() - 1){
+                    pizzaCookingState.getOrderedItem().getRecipe().getToppings().size() - 1){
                 pizzaCookingState.setCurrToppingIndex(pizzaCookingState.getCurrToppingIndex() + 1);
             }
             else {

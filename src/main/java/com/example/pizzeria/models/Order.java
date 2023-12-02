@@ -13,14 +13,14 @@ public class Order {
     private static AtomicInteger ID_GENERATOR = new AtomicInteger();
     private Integer id;
     private Integer cashRegisterId;
-    private List<Recipe> recipes;
+    private List<OrderedItem> orderedItems;
     private Diner diner;
     private LocalDateTime orderTime;
 
-    public Order(Integer cashRegisterId, List<Recipe> recipes, Diner dinner) {
+    public Order(Integer cashRegisterId, List<OrderedItem> orderedItems, Diner dinner) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.cashRegisterId = cashRegisterId;
-        this.recipes = recipes;
+        this.orderedItems = orderedItems;
         this.diner = dinner;
         this.orderTime = LocalDateTime.now();
     }

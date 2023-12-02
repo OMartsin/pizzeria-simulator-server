@@ -44,8 +44,8 @@ public class UniversalCookingManager implements ICookingManager {
     @Override
     public void acceptOrder(Order order) {
         try{
-            orders.put(order, order.getRecipes().stream().map(recipe ->
-                    new PizzaCookingState(recipe, order.getId())).toList());
+            orders.put(order, order.getOrderedItems().stream().map(orderedItem ->
+                    new PizzaCookingState(orderedItem, order.getId())).toList());
         }
         catch (Exception e){
             System.out.println("Error while accepting order");
@@ -54,7 +54,7 @@ public class UniversalCookingManager implements ICookingManager {
         }
         System.out.println("Order " + order.getId() + " accepted");
         System.out.println("Pizzas: ");
-        order.getRecipes().forEach(recipe -> System.out.println(recipe.getName()));
+        order.getOrderedItems().forEach(orderedItem -> System.out.println(orderedItem.getRecipe().getName()));
         handleNewOrderTasks(orders.get(order));
     }
 
