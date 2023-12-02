@@ -42,7 +42,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void acceptOrder(Order order) {
+    public synchronized void acceptOrder(Order order) {
         try{
             orders.put(order, order.getOrderedItems().stream().map(orderedItem ->
                     new PizzaCookingState(orderedItem, order.getId())).toList());
@@ -59,7 +59,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void pauseCook(Integer cookId) {
+    public synchronized void pauseCook(Integer cookId) {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.pauseCook();
@@ -69,7 +69,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void resumeCook(Integer cookId) {
+    public synchronized void resumeCook(Integer cookId) {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.resumeCook();
@@ -80,7 +80,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
 
-    private void giveNewTaskToCook(Cook cook) {
+    private synchronized void giveNewTaskToCook(Cook cook) {
         PizzaCookingState currPizzaStage = cooks.get(cook);
         PizzaCookingState pizzaCookingState = cookingInfoFinder.findFirstNotCompletedPizzaState(orders);
         if(currPizzaStage == null) {
@@ -96,7 +96,7 @@ public class UniversalCookingManager implements ICookingManager {
         publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
-    private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
+    private synchronized void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
             Cook cook = cookingInfoFinder.findAvailableCook(cooks);
@@ -112,7 +112,7 @@ public class UniversalCookingManager implements ICookingManager {
         }
     }
 
-    private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
+    private synchronized ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
                 cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {

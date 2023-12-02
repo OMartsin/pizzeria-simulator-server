@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -39,10 +38,14 @@ public class PizzaCookingState {
     }
 
     public void setCookingPizzaStage() {
-        this.currPizzaStage = this.currCookingStage;
+        this.currPizzaStage = getNextStage();
     }
 
     public void setWaitingPizzaStage() {
+        if(getNextStage().equals(PizzaStage.Completed)){
+            this.currPizzaStage = PizzaStage.Completed;
+            return;
+        }
         this.currPizzaStage = PizzaStage.Waiting;
     }
 }
