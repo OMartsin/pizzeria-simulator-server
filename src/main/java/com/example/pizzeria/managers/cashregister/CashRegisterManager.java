@@ -31,9 +31,10 @@ public class CashRegisterManager implements ICashRegisterManager {
         CashRegister cashRegister = this.cashRegisters.stream()
                 .min(Comparator.comparingInt(cr -> cr.getDiners().size()))
                 .orElseThrow();
-        cashRegister.addDinner(diner);
-      
         publisher.publishEvent(new ServiceOrderUpdateEvent(this, cashRegister, diner.getOrder()));
+
+        cashRegister.addDinner(diner);
+
     }
 
 }

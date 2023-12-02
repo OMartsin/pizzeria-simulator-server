@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -29,6 +28,14 @@ public class PizzaCookingState {
         if(currCookingStage == null) {
             return PizzaStage.Dough;
         }
+        if(currCookingStage.equals(PizzaStage.Topping)) {
+            if(currToppingIndex == null || currToppingIndex + 1 >= orderedItem.getRecipe().getToppings().size()) {
+                return this.currCookingStage.getNext();
+            }
+            else {
+                return PizzaStage.Topping;
+            }
+        }
         return this.currCookingStage.getNext();
     }
 
@@ -38,11 +45,24 @@ public class PizzaCookingState {
         return orderedItem.getRecipe().getToppings().get(currToppingIndex);
     }
 
+    //BUTT PLUG
+    public String getNextTopping() {
+        if(currToppingIndex == null)
+            return orderedItem.getRecipe().getToppings().get(0);
+        if(currToppingIndex + 1 >= orderedItem.getRecipe().getToppings().size())
+            return null;
+        return orderedItem.getRecipe().getToppings().get(currToppingIndex + 1);
+    }
+
     public void setCookingPizzaStage() {
-        this.currPizzaStage = this.currCookingStage;
+        this.currPizzaStage = getNextStage();
     }
 
     public void setWaitingPizzaStage() {
+        if(getNextStage().equals(PizzaStage.Completed)){
+            this.currPizzaStage = PizzaStage.Completed;
+            return;
+        }
         this.currPizzaStage = PizzaStage.Waiting;
     }
 }

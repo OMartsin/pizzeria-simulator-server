@@ -53,7 +53,9 @@ public class Cook extends Thread {
     }
 
     public void setBusy() {
-        this.status = CookStatus.BUSY;
+        if(this.status.equals(CookStatus.FREE)) {
+            this.status = CookStatus.BUSY;
+        }
     }
 
     public void setFree() {

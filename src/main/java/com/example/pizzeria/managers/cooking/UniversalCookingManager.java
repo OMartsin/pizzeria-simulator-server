@@ -1,8 +1,9 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
-import com.example.pizzeria.events.CookingOrderUpdateEvent;
+import com.example.pizzeria.events.PostCookingOrderUpdateEvent;
 import com.example.pizzeria.events.PausedCookUpdateEvent;
+import com.example.pizzeria.events.PreCookingOrderUpdateEvent;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
@@ -17,6 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void acceptOrder(Order order) {
+    public synchronized void acceptOrder(Order order) {
         try{
             orders.put(order, order.getOrderedItems().stream().map(orderedItem ->
                     new PizzaCookingState(orderedItem, order.getId())).toList());
@@ -59,7 +61,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void pauseCook(Integer cookId) {
+    public synchronized void pauseCook(Integer cookId) {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.pauseCook();
@@ -69,7 +71,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     @Override
-    public void resumeCook(Integer cookId) {
+    public synchronized void resumeCook(Integer cookId) {
         for (Cook cook : cooks.keySet()) {
             if (cook.getCookId().equals(cookId)) {
                 cook.resumeCook();
@@ -80,7 +82,7 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
 
-    private void giveNewTaskToCook(Cook cook) {
+    private synchronized void giveNewTaskToCook(Cook cook) {
         PizzaCookingState currPizzaStage = cooks.get(cook);
         PizzaCookingState pizzaCookingState = cookingInfoFinder.findFirstNotCompletedPizzaState(orders);
         if(currPizzaStage == null) {
@@ -93,10 +95,10 @@ public class UniversalCookingManager implements ICookingManager {
         cook.addTask(task);
 
         pizzaCookingState.setCookingPizzaStage();
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
-    private void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
+    private synchronized void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
         for (PizzaCookingState pizzaCookingState : pizzaCookingStates.stream().filter(
                 pizzaCookingState1 -> pizzaCookingState1.getIsCooking().equals(false)).toList()) {
             Cook cook = cookingInfoFinder.findAvailableCook(cooks);
@@ -108,13 +110,13 @@ public class UniversalCookingManager implements ICookingManager {
             cook.addTask(task);
 
             pizzaCookingState.setCookingPizzaStage();
-            publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+            publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
         }
     }
 
-    private ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
+    private synchronized ICookTask createCookTask(Cook cook, PizzaCookingState pizzaCookingState){
         return new PizzaHandlingCookTask(
-                cooks.get(cook), stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
+                pizzaCookingState, stageExecutionTimeCalculator.getStageExecutionTime(pizzaCookingState.getNextStage()),
                 new ITaskCallback() {
                     @Override
                     public void onTaskCompleted(Cook cook) {
@@ -131,21 +133,24 @@ public class UniversalCookingManager implements ICookingManager {
     }
 
     private void handleCallback(PizzaCookingState pizzaCookingState, Cook cook){
-        cooks.put(cook, null);
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
         if(cook.getStatus().equals(CookStatus.PAUSED)) {
+            cooks.put(cook, null);
             publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
-            if(!pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed)) {
-                List<PizzaCookingState> list = new ArrayList<>();
-                list.add(pizzaCookingState);
-                handleNewOrderTasks(list);
+            if(pizzaCookingState.getCompletedAt() == null) {
+                handleNewOrderTasks(List.of(pizzaCookingState));
             }
         }
-        if(cook.getStatus().equals(CookStatus.FREE)){
+        if(pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
+            pizzaCookingState.setCurrCookingStage(PizzaStage.Completed);
+            pizzaCookingState.setCompletedAt(LocalDateTime.now());
+            cooks.put(cook, null);
+            giveNewTaskToCook(cook);
+            checkIsOrderCompleted();
+
+        }
+        else if(cook.getStatus().equals(CookStatus.FREE)){
             cook.addTask(createCookTask(cook, pizzaCookingState));
         }
-        if(pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed)) {
-            checkIsOrderCompleted();
-        }
+        publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 }
