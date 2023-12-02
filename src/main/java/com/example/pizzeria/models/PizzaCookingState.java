@@ -37,6 +37,15 @@ public class PizzaCookingState {
         return orderedItem.getRecipe().getToppings().get(currToppingIndex);
     }
 
+    //BUTT PLUG
+    public String getNextTopping() {
+        if(currToppingIndex == null)
+            return orderedItem.getRecipe().getToppings().get(0);
+        if(currToppingIndex + 1 >= orderedItem.getRecipe().getToppings().size())
+            return null;
+        return orderedItem.getRecipe().getToppings().get(currToppingIndex + 1);
+    }
+
     public void setCookingPizzaStage() {
         this.currPizzaStage = getNextStage();
     }

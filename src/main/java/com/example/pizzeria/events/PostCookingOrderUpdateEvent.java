@@ -4,12 +4,13 @@ import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.cook.Cook;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
+
 @Getter
-public class CookingOrderUpdateEvent extends ApplicationEvent implements UpdateEvent {
+public class PostCookingOrderUpdateEvent extends ApplicationEvent implements UpdateEvent {
     private final Cook cook;
     private final PizzaCookingState pizzaCookingState;
 
-    public CookingOrderUpdateEvent(Object source, Cook cook, PizzaCookingState pizzaCookingState) {
+    public PostCookingOrderUpdateEvent(Object source, Cook cook, PizzaCookingState pizzaCookingState) {
         super(source);
         this.cook = cook;
         this.pizzaCookingState = pizzaCookingState;

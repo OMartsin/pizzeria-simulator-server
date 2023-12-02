@@ -1,8 +1,9 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
-import com.example.pizzeria.events.CookingOrderUpdateEvent;
+import com.example.pizzeria.events.PostCookingOrderUpdateEvent;
 import com.example.pizzeria.events.PausedCookUpdateEvent;
+import com.example.pizzeria.events.PreCookingOrderUpdateEvent;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.PizzaStage;
@@ -130,7 +131,7 @@ public class SpecializedCookingManager implements ICookingManager {
         cooks.put(cook, pizzaCookingState);
 
         pizzaCookingState.setCookingPizzaStage();
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private synchronized ICookTask createCookTask(PizzaCookingState pizzaCookingState, Cook cook){
@@ -160,7 +161,7 @@ public class SpecializedCookingManager implements ICookingManager {
             findNewTaskToCook(cook);
         }
         handlePizzaComplete(pizzaCookingState);
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private void handlePizzaComplete(PizzaCookingState pizzaCookingState){

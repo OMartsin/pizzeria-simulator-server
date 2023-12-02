@@ -1,10 +1,7 @@
 package com.example.pizzeria.event_listeners;
 
 import com.example.pizzeria.dto.*;
-import com.example.pizzeria.events.CookingOrderUpdateEvent;
-import com.example.pizzeria.events.PausedCookUpdateEvent;
-import com.example.pizzeria.events.ServiceOrderUpdateEvent;
-import com.example.pizzeria.events.UpdateEvent;
+import com.example.pizzeria.events.*;
 import com.example.pizzeria.managers.cashregister.CashRegister;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
@@ -30,9 +27,11 @@ public class NetworkEventListener implements UpdateEventListener{
             handleServiceOrderUpdateEvent((ServiceOrderUpdateEvent) event);
         } else if (event instanceof PausedCookUpdateEvent) {
             handlePausedCookUpdateEvent((PausedCookUpdateEvent) event);
-        } else if (event instanceof CookingOrderUpdateEvent) {
-            handleCookingOrderUpdateEvent((CookingOrderUpdateEvent) event);
-        } else {
+        } else if (event instanceof PostCookingOrderUpdateEvent) {
+            handlePostCookingOrderUpdateEvent((PostCookingOrderUpdateEvent) event);
+        } else if (event instanceof PreCookingOrderUpdateEvent) {
+            handlePreCookingOrderUpdateEvent((PreCookingOrderUpdateEvent) event);
+        }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported UpdateEvent type");
         }
     }
@@ -65,7 +64,22 @@ public class NetworkEventListener implements UpdateEventListener{
         messagingTemplate.convertAndSend(destination, dto);
     }
 
-    private void handleCookingOrderUpdateEvent(CookingOrderUpdateEvent event) {
+    private void handlePreCookingOrderUpdateEvent(PreCookingOrderUpdateEvent event) {
+        String destination = "/topic/cookingOrderUpdate";
+        PizzaCookingState pizzaCookingState = event.getPizzaCookingState();
+        String topping = pizzaCookingState.getNextTopping();
+        Integer cookId = event.getCook().getCookId();
+        Integer orderId = pizzaCookingState.getOrderId();
+
+        // Create a CookingOrderDto with relevant information
+        CookingOrderDto dto = new CookingOrderDto
+                (pizzaCookingState.getCurrPizzaStage(), topping, cookId, orderId,
+                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt());
+
+        messagingTemplate.convertAndSend(destination, dto);
+    }
+
+    private void handlePostCookingOrderUpdateEvent(PostCookingOrderUpdateEvent event) {
         String destination = "/topic/cookingOrderUpdate";
         PizzaCookingState pizzaCookingState = event.getPizzaCookingState();
         String topping = pizzaCookingState.getCurrentTopping();

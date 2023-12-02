@@ -1,8 +1,9 @@
 package com.example.pizzeria.managers.cooking;
 
 import com.example.pizzeria.config.PizzeriaConfig;
-import com.example.pizzeria.events.CookingOrderUpdateEvent;
+import com.example.pizzeria.events.PostCookingOrderUpdateEvent;
 import com.example.pizzeria.events.PausedCookUpdateEvent;
+import com.example.pizzeria.events.PreCookingOrderUpdateEvent;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaStage;
 import com.example.pizzeria.models.PizzaCookingState;
@@ -94,7 +95,7 @@ public class UniversalCookingManager implements ICookingManager {
         cook.addTask(task);
 
         pizzaCookingState.setCookingPizzaStage();
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private synchronized void handleNewOrderTasks(List<PizzaCookingState> pizzaCookingStates){
@@ -109,7 +110,7 @@ public class UniversalCookingManager implements ICookingManager {
             cook.addTask(task);
 
             pizzaCookingState.setCookingPizzaStage();
-            publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+            publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
         }
     }
 
@@ -148,6 +149,6 @@ public class UniversalCookingManager implements ICookingManager {
         else if(cook.getStatus().equals(CookStatus.FREE)){
             cook.addTask(createCookTask(cook, pizzaCookingState));
         }
-        publisher.publishEvent(new CookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 }
