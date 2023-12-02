@@ -5,6 +5,7 @@ import com.example.pizzeria.events.*;
 import com.example.pizzeria.managers.cashregister.CashRegister;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
+import com.example.pizzeria.models.PizzaStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -67,7 +68,12 @@ public class NetworkEventListener implements UpdateEventListener{
     private void handlePreCookingOrderUpdateEvent(PreCookingOrderUpdateEvent event) {
         String destination = "/topic/cookingOrderUpdate";
         PizzaCookingState pizzaCookingState = event.getPizzaCookingState();
-        String topping = pizzaCookingState.getNextTopping();
+        String topping;
+        if(pizzaCookingState.getCurrPizzaStage().equals(PizzaStage.Topping)){
+            topping = pizzaCookingState.getNextTopping();
+        }else {
+            topping = null;
+        }
         Integer cookId = event.getCook().getCookId();
         Integer orderId = pizzaCookingState.getOrderId();
 

@@ -28,6 +28,14 @@ public class PizzaCookingState {
         if(currCookingStage == null) {
             return PizzaStage.Dough;
         }
+        if(currCookingStage.equals(PizzaStage.Topping)) {
+            if(currToppingIndex == null) {
+                return this.currCookingStage.getNext();
+            }
+            else {
+                return PizzaStage.Topping;
+            }
+        }
         return this.currCookingStage.getNext();
     }
 

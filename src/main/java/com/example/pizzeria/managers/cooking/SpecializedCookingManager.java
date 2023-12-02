@@ -154,21 +154,21 @@ public class SpecializedCookingManager implements ICookingManager {
 
     private void handleCallback(PizzaCookingState pizzaCookingState, Cook cook) {
         cooks.put(cook, null);
+        handlePizzaComplete(pizzaCookingState);
+        publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
         if(cook.getStatus().equals(CookStatus.PAUSED)) {
             publisher.publishEvent(new PausedCookUpdateEvent(this, cook));
+        }
+        if(!pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed)){
+            handleNewOrderTasks(List.of(pizzaCookingState));
         }
         if(cook.getStatus().equals(CookStatus.FREE)){
             findNewTaskToCook(cook);
         }
-        handlePizzaComplete(pizzaCookingState);
-        publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
 
     private void handlePizzaComplete(PizzaCookingState pizzaCookingState){
-        if(pizzaCookingState.getNextStage() != PizzaStage.Completed) {
-            handleNewOrderTasks(List.of(pizzaCookingState));
-        }
-        else {
+        if(pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Completed);
             pizzaCookingState.setCompletedAt(LocalDateTime.now());
             checkIsOrderCompleted();
