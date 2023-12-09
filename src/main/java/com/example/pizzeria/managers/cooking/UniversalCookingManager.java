@@ -150,6 +150,7 @@ public class UniversalCookingManager implements ICookingManager {
         }
         else if(cook.getStatus().equals(CookStatus.FREE)){
             cook.addTask(createCookTask(cook, pizzaCookingState));
+            pizzaCookingState.setCookingPizzaStage();
         }
         publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
     }
