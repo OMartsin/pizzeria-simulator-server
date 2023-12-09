@@ -144,13 +144,18 @@ public class UniversalCookingManager implements ICookingManager {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Completed);
             pizzaCookingState.setCompletedAt(LocalDateTime.now());
             cooks.put(cook, null);
+            publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
             giveNewTaskToCook(cook);
             checkIsOrderCompleted();
+            return;
 
         }
-        else if(cook.getStatus().equals(CookStatus.FREE)){
-            cook.addTask(createCookTask(cook, pizzaCookingState));
-        }
         publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        if(cook.getStatus().equals(CookStatus.FREE)){
+            cook.addTask(createCookTask(cook, pizzaCookingState));
+            pizzaCookingState.setCookingPizzaStage();
+            publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));
+        }
+
     }
 }
