@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 public class OrderedItem {
     private static AtomicInteger ID_GENERATOR = new AtomicInteger();
-    private final int id;
+    private final Integer id;
     private Recipe recipe;
 
     public OrderedItem(Recipe recipe) {

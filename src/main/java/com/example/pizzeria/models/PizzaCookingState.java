@@ -70,4 +70,9 @@ public class PizzaCookingState {
     public void modifyLastModifiedAt() {
         this.modifiedAt = LocalDateTime.now();
     }
+
+    @Override
+    public int hashCode() {
+        return orderedItem.getId().hashCode();
+    }
 }
