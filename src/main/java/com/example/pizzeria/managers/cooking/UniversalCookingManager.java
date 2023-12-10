@@ -91,6 +91,7 @@ public class UniversalCookingManager implements ICookingManager {
         if(pizzaCookingState == null) {
             return;
         }
+        pizzaCookingState.modifyLastModifiedAt();
         ICookTask task = createCookTask(cook, pizzaCookingState);
         cook.addTask(task);
 
@@ -106,6 +107,7 @@ public class UniversalCookingManager implements ICookingManager {
                 return;
             }
             cooks.put(cook, pizzaCookingState);
+            pizzaCookingState.modifyLastModifiedAt();
             ICookTask task = createCookTask(cook, pizzaCookingState);
             cook.addTask(task);
 
@@ -152,6 +154,7 @@ public class UniversalCookingManager implements ICookingManager {
         }
         publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
         if(cook.getStatus().equals(CookStatus.FREE)){
+            pizzaCookingState.modifyLastModifiedAt();
             cook.addTask(createCookTask(cook, pizzaCookingState));
             pizzaCookingState.setCookingPizzaStage();
             publisher.publishEvent(new PreCookingOrderUpdateEvent(this, cook, pizzaCookingState));

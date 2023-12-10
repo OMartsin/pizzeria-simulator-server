@@ -13,6 +13,7 @@ public class PizzaCookingState {
     private PizzaStage currCookingStage;
     private PizzaStage currPizzaStage;
     private Integer currToppingIndex;
+    private LocalDateTime modifiedAt;
     private LocalDateTime completedAt;
     private Boolean isCooking = false;
 
@@ -22,6 +23,7 @@ public class PizzaCookingState {
         this.currCookingStage = null;
         this.currPizzaStage = PizzaStage.Waiting;
         this.currToppingIndex = null;
+        this.modifiedAt = LocalDateTime.now();
     }
 
     public PizzaStage getNextStage() {
@@ -45,7 +47,6 @@ public class PizzaCookingState {
         return orderedItem.getRecipe().getToppings().get(currToppingIndex);
     }
 
-    //BUTT PLUG
     public String getNextTopping() {
         if(currToppingIndex == null)
             return orderedItem.getRecipe().getToppings().get(0);
@@ -64,5 +65,9 @@ public class PizzaCookingState {
             return;
         }
         this.currPizzaStage = PizzaStage.Waiting;
+    }
+
+    public void modifyLastModifiedAt() {
+        this.modifiedAt = LocalDateTime.now();
     }
 }

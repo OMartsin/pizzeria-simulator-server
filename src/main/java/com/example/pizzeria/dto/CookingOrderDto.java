@@ -17,4 +17,5 @@ public class CookingOrderDto {
     private Integer orderId;
     private Integer orderPizzaId;
     private LocalDateTime completedAt;
+    private LocalDateTime modifiedAt;
 }

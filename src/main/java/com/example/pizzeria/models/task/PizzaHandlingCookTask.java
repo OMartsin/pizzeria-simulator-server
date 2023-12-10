@@ -36,6 +36,7 @@ public class PizzaHandlingCookTask implements ICookTask {
     }
 
     private void handlePizza(){
+        pizzaCookingState.modifyLastModifiedAt(); 
         if(pizzaCookingState.getCurrCookingStage() == null) {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Dough);
             return;

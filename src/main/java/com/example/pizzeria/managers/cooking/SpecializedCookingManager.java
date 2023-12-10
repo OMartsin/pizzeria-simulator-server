@@ -125,6 +125,7 @@ public class SpecializedCookingManager implements ICookingManager {
     }
 
     private void giveCookNewTask(Cook cook, PizzaCookingState pizzaCookingState){
+        pizzaCookingState.modifyLastModifiedAt();
         ICookTask task = createCookTask(pizzaCookingState, cook);
         pizzaCookingState.setIsCooking(true);
         cook.addTask(task);

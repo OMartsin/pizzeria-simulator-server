@@ -6,7 +6,7 @@ import com.example.pizzeria.managers.cashregister.CashRegister;
 import com.example.pizzeria.models.Order;
 import com.example.pizzeria.models.PizzaCookingState;
 import com.example.pizzeria.models.PizzaStage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,9 +17,10 @@ import java.util.List;
 
 
 @Component
+@RequiredArgsConstructor
 public class NetworkEventListener implements UpdateEventListener{
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     @EventListener
@@ -80,7 +81,8 @@ public class NetworkEventListener implements UpdateEventListener{
         // Create a CookingOrderDto with relevant information
         CookingOrderDto dto = new CookingOrderDto
                 (pizzaCookingState.getCurrPizzaStage(), topping, cookId, orderId,
-                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt());
+                        pizzaCookingState.getOrderedItem().getId(),
+                        pizzaCookingState.getCompletedAt(), pizzaCookingState.getModifiedAt());
 
         messagingTemplate.convertAndSend(destination, dto);
     }
@@ -95,7 +97,8 @@ public class NetworkEventListener implements UpdateEventListener{
         // Create a CookingOrderDto with relevant information
         CookingOrderDto dto = new CookingOrderDto
                 (pizzaCookingState.getCurrPizzaStage(), topping, cookId, orderId,
-                        pizzaCookingState.getOrderedItem().getId(), pizzaCookingState.getCompletedAt());
+                        pizzaCookingState.getOrderedItem().getId(),
+                        pizzaCookingState.getCompletedAt(), pizzaCookingState.getModifiedAt());
 
         messagingTemplate.convertAndSend(destination, dto);
     }
