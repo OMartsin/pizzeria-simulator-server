@@ -82,5 +82,11 @@
     "name": "Con Birra",
     "toppings": ["Cream", "Hunter's Sausages", "Chicken Breast", "Chili Pepper", "Mozzarella", "Gorgonzola", "Chorizo"],
     "url": "https://imgur.com/lln2lhh.png"
+  },
+  {
+    "id": 15,
+    "name": "Mitza",
+    "toppings": ["Neapolitan Sauce", "Pepperoni", "Bacon", "Bavarian Sausages","Ham","Parmesan", "Mozzarella"],
+    "url": "https://imgur.com/UQGEvCe.png"
   }
 ]
