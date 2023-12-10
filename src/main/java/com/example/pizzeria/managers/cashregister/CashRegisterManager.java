@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class CashRegisterManager implements ICashRegisterManager {
 
     @Override
     public void init(int cashRegistersNumber, ICookingManager cookingManager) {
+        cashRegisters = new ArrayList<>();
         for (int i = 0; i < cashRegistersNumber; i++) {
             CashRegister cashRegister = new CashRegister(cookingManager);
             cashRegisters.add(cashRegister);

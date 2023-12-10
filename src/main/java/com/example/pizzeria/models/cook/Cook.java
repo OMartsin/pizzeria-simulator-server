@@ -35,7 +35,7 @@ public class Cook extends Thread {
                 ICookTask task = tasksQueue.take();
                 task.execute(this);
             } catch (Exception e) {
-                e.printStackTrace();
+                return;
             }
         }
     }
