@@ -19,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class DinersGenerator {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> taskHandle;
     private final CashRegisterManager cashRegisterManager;
+    private final int maxPizzas = 5; // більше 5 в 1 руки не давати
 
     public void setDinerArrivalConfig(PizzeriaConfig pizzeriaConfig) {
         this.pizzeriaConfig = pizzeriaConfig;
@@ -66,17 +68,23 @@ public class DinersGenerator {
     }
 
     private Diner generateDinner(List<Recipe> menu) {
-        int random = (int) (Math.random() * menu.size() - 1) + 1;
-        List<Recipe> tempList = new ArrayList<>(menu);
-        Collections.shuffle(tempList, new Random()); // Shuffle the list randomly
 
-        List<OrderedItem> orderedItems = tempList.subList(0, random)
-                .stream()
-                .map(OrderedItem::new)
-                .collect(Collectors.toList());
+        List<Recipe> randomPizzas = getRandomPizzas(menu);
 
         Faker faker = new Faker();
-        return new Diner(faker.name().fullName(), new Order(null, orderedItems, null));
+        return new Diner(faker.name().fullName(), new Order(null,
+                randomPizzas.stream().map(OrderedItem::new).collect(Collectors.toList()), null));
+    }
+
+    private List<Recipe> getRandomPizzas(List<Recipe> menu) {
+        List<Recipe> tempList = new ArrayList<>(menu);
+        Collections.shuffle(tempList, new Random());
+
+        int numberOfPizzas = (int) (Math.random() * maxPizzas) + 1;
+
+        return IntStream.range(0, numberOfPizzas)
+                .mapToObj(i -> tempList.get(i % tempList.size()))
+                .collect(Collectors.toList());
     }
 
 }
