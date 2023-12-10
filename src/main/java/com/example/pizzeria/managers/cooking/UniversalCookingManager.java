@@ -28,10 +28,10 @@ public class UniversalCookingManager implements ICookingManager {
     private final ApplicationEventPublisher publisher;
     private final SimpMessagingTemplate messagingTemplate;
     private final PizzeriaConfig config;
-    private Map<Order, List<PizzaCookingState>> orders;
-    private Map<Cook, PizzaCookingState> cooks;
     private final CookingInfoFinder cookingInfoFinder;
     private final StageExecutionTimeCalculator stageExecutionTimeCalculator;
+    private Map<Order, List<PizzaCookingState>> orders;
+    private Map<Cook, PizzaCookingState> cooks;
 
     public void init() {
         orders = new HashMap<>();
@@ -41,6 +41,18 @@ public class UniversalCookingManager implements ICookingManager {
             cooks.put(cook, null);
             cook.start();
         }
+    }
+
+    public void terminate() {
+        if(cooks == null) {
+            return;
+        }
+        for (Cook cook : cooks.keySet()) {
+            cook.interrupt();
+        }
+        orders.clear();
+        cooks.clear();
+
     }
 
     @Override

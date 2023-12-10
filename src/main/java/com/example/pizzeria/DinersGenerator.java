@@ -52,8 +52,11 @@ public class DinersGenerator {
 
     public void pause() throws IllegalStateException {
         checkArrivalConfigNotNull();
-
         taskHandle.cancel(false);
+    }
+
+    public void terminate() throws IllegalStateException {
+        scheduler.shutdown();
     }
 
     private void checkArrivalConfigNotNull() throws IllegalStateException {

@@ -1,11 +1,11 @@
 package com.example.pizzeria.managers.cashregister;
 
 import com.example.pizzeria.events.ServiceOrderUpdateEvent;
+import com.example.pizzeria.managers.cooking.ICookingManager;
 import com.example.pizzeria.models.Diner;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 public class CashRegisterManager implements ICashRegisterManager {
-
-    @Autowired
-    private ApplicationEventPublisher publisher;
+    private final ApplicationEventPublisher publisher;
 
     private List<CashRegister> cashRegisters;
 
@@ -35,6 +33,19 @@ public class CashRegisterManager implements ICashRegisterManager {
 
         cashRegister.addDinner(diner);
 
+    }
+
+    @Override
+    public void init(int cashRegistersNumber, ICookingManager cookingManager) {
+        for (int i = 0; i < cashRegistersNumber; i++) {
+            CashRegister cashRegister = new CashRegister(cookingManager);
+            cashRegisters.add(cashRegister);
+        }
+    }
+
+    @Override
+    public void terminate() {
+        cashRegisters.clear();
     }
 
 }

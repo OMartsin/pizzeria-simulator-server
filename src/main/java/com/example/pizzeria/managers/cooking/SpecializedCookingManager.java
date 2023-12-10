@@ -57,6 +57,20 @@ public class SpecializedCookingManager implements ICookingManager {
         };
     }
 
+    public void terminate() {
+        if(cooks == null) {
+            return;
+        }
+        for(var cooksMapItem : cookPerStage.entrySet()) {
+            for(var cook : cooksMapItem.getValue()) {
+                cook.interrupt();
+            }
+        }
+        orders.clear();
+        cookPerStage.clear();
+        cooks.clear();
+    }
+
     @Override
     public synchronized void acceptOrder(Order order) {
         try {
