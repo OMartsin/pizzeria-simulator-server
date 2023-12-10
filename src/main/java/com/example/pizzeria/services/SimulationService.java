@@ -37,5 +37,6 @@ public class SimulationService implements ISimulationService {
 
     public void terminate() throws IllegalStateException {
         initializer.terminate();
+        isRunning = false;
     }
 }
