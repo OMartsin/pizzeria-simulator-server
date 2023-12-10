@@ -1,19 +1,6 @@
 package com.example.pizzeria.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.List;
-@Getter
-@Setter
-@AllArgsConstructor
-public class ServiceOrderDto {
-    private Long id;
-    private Long cashRegisterId;
-    private LocalDateTime createdAt;
-    private List<OrderPizzaDto> orderPizzas;
-    private DinerDto diner;
 
-}
+public record ServiceOrderDto(Long id, Long cashRegisterId, LocalDateTime createdAt, List<OrderPizzaDto> orderPizzas, DinerDto diner) {}
