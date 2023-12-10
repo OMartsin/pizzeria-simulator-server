@@ -2,6 +2,7 @@ package com.example.pizzeria.services;
 
 import com.example.pizzeria.DinersGenerator;
 import com.example.pizzeria.Initializer;
+import com.example.pizzeria.utilities.LoggerConfigUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class SimulationService implements ISimulationService {
 
         dinersGenerator.start();
         isRunning = true;
+
+        LoggerConfigUtility.setNewLogFilename();
 
         return true;
     }

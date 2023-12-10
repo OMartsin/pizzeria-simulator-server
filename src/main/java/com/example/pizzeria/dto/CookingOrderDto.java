@@ -1,21 +1,7 @@
 package com.example.pizzeria.dto;
 
 import com.example.pizzeria.models.PizzaStage;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class CookingOrderDto {
-    private PizzaStage currentStage;
-    private String currentTopping;
-    private Integer cookId;
-    private Integer orderId;
-    private Integer orderPizzaId;
-    private LocalDateTime completedAt;
-    private LocalDateTime modifiedAt;
-}
+public record CookingOrderDto(PizzaStage currentStage, String currentTopping, Integer cookId, Integer orderId, Integer orderPizzaId, LocalDateTime completedAt, LocalDateTime modifiedAt) {}

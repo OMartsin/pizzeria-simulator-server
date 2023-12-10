@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
     private final PizzaMenuReader pizzaMenuReader;
 
     @PostConstruct
-    public void initDefaultConfig(){
+    public void initDefaultConfig() throws IOException {
         pizzeriaConfig.updateConfig(
                 true,
                 new HashMap<>() {
@@ -37,9 +38,12 @@ public class PizzeriaConfigService implements IPizzeriaConfigService {
                     }
                 },
                 100,
-                new DinerArrivalConfig(DinerArrivalFrequency.Medium, 10),
-                5,
-                new ArrayList<>(),
+                new DinerArrivalConfig(DinerArrivalFrequency.Medium, 2),
+                3,
+                new ArrayList<>(getMenu()
+                        .stream()
+                        .limit(3)
+                        .collect(Collectors.toList())),
                 new HashMap<>() {
                     {
                         put(PizzaStage.Dough, 3);
