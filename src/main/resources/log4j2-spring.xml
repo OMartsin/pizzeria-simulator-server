@@ -13,7 +13,7 @@
 
         <File name="file" fileName="${logFilename}">
             <PatternLayout>
-                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+                <pattern>[%d]%n%m%n%n</pattern>
             </PatternLayout>
         </File>
     </Appenders>
