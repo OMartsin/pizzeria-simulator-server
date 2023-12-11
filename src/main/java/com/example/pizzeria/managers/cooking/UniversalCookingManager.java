@@ -157,10 +157,12 @@ public class UniversalCookingManager implements ICookingManager {
         if(pizzaCookingState.getNextStage().equals(PizzaStage.Completed)) {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Completed);
             pizzaCookingState.setCompletedAt(LocalDateTime.now());
+            publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
             if(cook.getStatus().equals(CookStatus.FREE)){
                 giveNewTaskToCook(cook);
             }
             checkIsOrderCompleted();
+            return;
         }
         publisher.publishEvent(new PostCookingOrderUpdateEvent(this, cook, pizzaCookingState));
         if(cook.getStatus().equals(CookStatus.FREE) &&
