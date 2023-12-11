@@ -19,6 +19,7 @@ public interface CookingOrderMapper {
     @Mapping(source = "pizzaCookingState.orderedItem.id", target = "orderPizzaId")
     @Mapping(source = "pizzaCookingState.completedAt", target = "completedAt")
     @Mapping(target = "currentTopping", qualifiedByName = "mapCurrentTopping", source = "event")
+    @Mapping(source = "pizzaCookingState.modifiedAt", target = "modifiedAt")
     CookingOrderDto toCookingOrderDto(PreCookingOrderUpdateEvent event);
 
     @Named("mapCurrentTopping")
@@ -36,5 +37,6 @@ public interface CookingOrderMapper {
     @Mapping(source = "pizzaCookingState.orderedItem.id", target = "orderPizzaId")
     @Mapping(source = "pizzaCookingState.completedAt", target = "completedAt")
     @Mapping(source = "pizzaCookingState.currentTopping", target = "currentTopping")
+    @Mapping(source = "pizzaCookingState.modifiedAt", target = "modifiedAt")
     CookingOrderDto toCookingOrderDto(PostCookingOrderUpdateEvent event);
 }

@@ -1,6 +1,7 @@
 package com.example.pizzeria.models.cook;
 
 import com.example.pizzeria.models.task.ICookTask;
+import com.github.javafaker.Faker;
 import lombok.Getter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,7 +17,8 @@ public class Cook extends Thread {
 
     public Cook(){
         this.cookId = ID_GENERATOR.getAndIncrement();
-        this.cookName = "Cook " + cookId;
+        Faker faker = new Faker();
+        this.cookName = faker.name().firstName();
         this.status = CookStatus.FREE;
         this.tasksQueue = new LinkedBlockingQueue<>();
     }
@@ -35,7 +37,7 @@ public class Cook extends Thread {
                 ICookTask task = tasksQueue.take();
                 task.execute(this);
             } catch (Exception e) {
-                e.printStackTrace();
+                return;
             }
         }
     }

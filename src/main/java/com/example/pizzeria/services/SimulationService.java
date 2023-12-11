@@ -1,6 +1,7 @@
 package com.example.pizzeria.services;
 
 import com.example.pizzeria.DinersGenerator;
+import com.example.pizzeria.Initializer;
 import com.example.pizzeria.utilities.LoggerConfigUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SimulationService implements ISimulationService {
     private final DinersGenerator dinersGenerator;
+    private final Initializer initializer;
     private boolean isRunning = false;
 
     public boolean start() throws IllegalStateException {
+        initializer.init();
         if (isRunning) {
             return false;
         }
@@ -33,5 +36,10 @@ public class SimulationService implements ISimulationService {
         isRunning = false;
 
         return true;
+    }
+
+    public void terminate() throws IllegalStateException {
+        initializer.terminate();
+        isRunning = false;
     }
 }

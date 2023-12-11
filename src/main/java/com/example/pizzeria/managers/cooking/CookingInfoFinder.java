@@ -7,6 +7,7 @@ import com.example.pizzeria.models.cook.Cook;
 import com.example.pizzeria.models.cook.CookStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,41 +37,26 @@ public class CookingInfoFinder {
         return null;
     }
 
-    public PizzaCookingState findFirstNotCompletedPizzaState( Map<Order,
-            List<PizzaCookingState>> orders , PizzaStage pizzaStage) {
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
-            List<PizzaCookingState> pizzaCookingStates = entry.getValue();
-
-            for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if (pizzaCookingState.getNextStage() == pizzaStage &&
-                        pizzaCookingState.getIsCooking().equals(false)) {
-                    return pizzaCookingState;
-                }
-            }
-        }
-        return null;
+    public PizzaCookingState findFirstNotCompletedPizzaState(Map<Order, List<PizzaCookingState>> orders, PizzaStage pizzaStage) {
+        return orders.entrySet().stream()
+                .sorted(Comparator.comparingInt(entry -> entry.getKey().getId()))
+                .flatMap(entry -> entry.getValue().stream())
+                .filter(pizzaCookingState ->
+                        pizzaCookingState.getNextStage() == pizzaStage &&
+                                !pizzaCookingState.getIsCooking())
+                .findFirst()
+                .orElse(null);
     }
 
-    public PizzaCookingState findFirstNotCompletedPizzaState( Map<Order,
-            List<PizzaCookingState>> orders) {
-        for (Map.Entry<Order, List<PizzaCookingState>> entry : orders.entrySet()) {
-            List<PizzaCookingState> pizzaCookingStates = entry.getValue();
-
-            for (PizzaCookingState pizzaCookingState : pizzaCookingStates) {
-                if(pizzaCookingState.getCurrCookingStage() == null){
-                    if(pizzaCookingState.getIsCooking().equals(false)){
-                        return pizzaCookingState;
-                    }
-                    continue;
-                }
-                if (!pizzaCookingState.getCurrCookingStage().equals(PizzaStage.Completed) &&
-                        !pizzaCookingState.getNextStage().equals(PizzaStage.Completed) &&
-                         pizzaCookingState.getIsCooking().equals(false)) {
-                    return pizzaCookingState;
-                }
-            }
-        }
-        return null;
+    public synchronized PizzaCookingState findFirstNotCompletedPizzaState(Map<Order, List<PizzaCookingState>> orders) {
+        return orders.entrySet().stream()
+                .sorted(Comparator.comparingInt(entry -> entry.getKey().getId()))
+                .flatMap(entry -> entry.getValue().stream())
+                .filter(pizzaCookingState ->
+                        (pizzaCookingState.getCurrCookingStage() == null ||
+                                pizzaCookingState.getCompletedAt() == null ) && !pizzaCookingState.getIsCooking())
+                .findFirst()
+                .orElse(null);
     }
 
     public Optional<PizzaStage> findPizzaStageByCook( Map<PizzaStage, List<Cook>> cooks, Cook cook) {

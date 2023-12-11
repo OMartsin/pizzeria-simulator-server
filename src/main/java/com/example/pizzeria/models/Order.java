@@ -24,4 +24,9 @@ public class Order {
         this.diner = dinner;
         this.orderTime = LocalDateTime.now();
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

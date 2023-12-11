@@ -30,12 +30,12 @@ public class PizzaHandlingCookTask implements ICookTask {
             pizzaCookingState.setWaitingPizzaStage();
             callback.onTaskCompleted(cook);
         } catch (InterruptedException e) {
-            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
 
     private void handlePizza(){
+        pizzaCookingState.modifyLastModifiedAt(); 
         if(pizzaCookingState.getCurrCookingStage() == null) {
             pizzaCookingState.setCurrCookingStage(PizzaStage.Dough);
             return;

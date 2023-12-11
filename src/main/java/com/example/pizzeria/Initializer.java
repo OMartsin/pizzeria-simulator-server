@@ -1,6 +1,5 @@
 package com.example.pizzeria;
 
-import com.example.pizzeria.managers.cashregister.CashRegister;
 import com.example.pizzeria.managers.cashregister.CashRegisterManager;
 import com.example.pizzeria.config.PizzeriaConfig;
 import com.example.pizzeria.managers.cooking.ICookingManager;
@@ -9,8 +8,6 @@ import com.example.pizzeria.managers.cooking.UniversalCookingManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,17 +23,14 @@ public class Initializer {
         ICookingManager cookingManager = config.isSpecializedCooksMode()
                 ? specializedCookingManager : universalCookingManager;
         cookingManager.init();
-        initCashRegisterManager(cookingManager);
+        cashRegisterManager.init(config.getCashRegisterQuantity(), cookingManager);
     }
 
-    private void initCashRegisterManager(ICookingManager cookingManager) {
-        List<CashRegister> cashRegisters = new ArrayList<>();
-
-        for (int i = 0; i < config.getCashRegisterQuantity(); i++) {
-            CashRegister cashRegister = new CashRegister(cookingManager);
-            cashRegisters.add(cashRegister);
-        }
-        cashRegisterManager.setCashRegisters(cashRegisters);
+    public void terminate() {
+        dinersGenerator.terminate();
+        specializedCookingManager.terminate();
+        universalCookingManager.terminate();
+        cashRegisterManager.terminate();
     }
 }
 

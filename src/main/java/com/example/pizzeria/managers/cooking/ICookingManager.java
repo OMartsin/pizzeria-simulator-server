@@ -7,4 +7,5 @@ public interface ICookingManager {
     void acceptOrder(Order order);
     void pauseCook(Integer cookId);
     void resumeCook(Integer cookId);
+    void terminate();
 }
