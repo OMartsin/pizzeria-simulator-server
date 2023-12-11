@@ -48,13 +48,13 @@ public class CookingInfoFinder {
                 .orElse(null);
     }
 
-    public PizzaCookingState findFirstNotCompletedPizzaState(Map<Order, List<PizzaCookingState>> orders) {
+    public synchronized PizzaCookingState findFirstNotCompletedPizzaState(Map<Order, List<PizzaCookingState>> orders) {
         return orders.entrySet().stream()
                 .sorted(Comparator.comparingInt(entry -> entry.getKey().getId()))
                 .flatMap(entry -> entry.getValue().stream())
                 .filter(pizzaCookingState ->
-                        pizzaCookingState.getCurrCookingStage() == null ||
-                                (pizzaCookingState.getCompletedAt() == null && !pizzaCookingState.getIsCooking()))
+                        (pizzaCookingState.getCurrCookingStage() == null ||
+                                pizzaCookingState.getCompletedAt() == null ) && !pizzaCookingState.getIsCooking())
                 .findFirst()
                 .orElse(null);
     }
