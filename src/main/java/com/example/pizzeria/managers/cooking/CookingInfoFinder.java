@@ -54,9 +54,7 @@ public class CookingInfoFinder {
                 .flatMap(entry -> entry.getValue().stream())
                 .filter(pizzaCookingState ->
                         pizzaCookingState.getCurrCookingStage() == null ||
-                                (pizzaCookingState.getCurrCookingStage() != PizzaStage.Completed &&
-                                        pizzaCookingState.getNextStage() != PizzaStage.Completed &&
-                                        !pizzaCookingState.getIsCooking()))
+                                (pizzaCookingState.getCompletedAt() == null && !pizzaCookingState.getIsCooking()))
                 .findFirst()
                 .orElse(null);
     }
