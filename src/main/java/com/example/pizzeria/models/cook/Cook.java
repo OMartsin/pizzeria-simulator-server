@@ -18,7 +18,7 @@ public class Cook extends Thread {
     public Cook(){
         this.cookId = ID_GENERATOR.getAndIncrement();
         Faker faker = new Faker();
-        this.cookName = faker.nation().nationality() + " " + faker.name().firstName();
+        this.cookName = faker.name().firstName();
         this.status = CookStatus.FREE;
         this.tasksQueue = new LinkedBlockingQueue<>();
     }
