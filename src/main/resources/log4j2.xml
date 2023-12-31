@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <!--use system property for setting logFilename at runtime-->
+        <Property name="logFilename">${sys:logFilename:-logs/pizzeria.log}</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+
+        <File name="file" fileName="${logFilename}">
+            <PatternLayout>
+                <pattern>[%d]%n%m%n%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <!-- Logger for file event listener -->
+        <Logger name="com.example.pizzeria.event_listeners.FileEventListener" level="INFO" additivity="false">
+            <AppenderRef ref="file"/>
+        </Logger>
+
+        <!-- Log default spring stuff -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+        </Root>
+    </Loggers>
+
+
+
+</Configuration>

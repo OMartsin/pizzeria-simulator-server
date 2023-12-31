@@ -18,7 +18,6 @@ public class PizzaMenuReader {
         if (inputStream == null) {
             throw new IOException("Could not find pizza-menu.json resource");
         }
-
         return objectMapper.readValue(inputStream, new TypeReference<>() {});
     }
 }

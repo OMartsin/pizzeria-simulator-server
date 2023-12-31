@@ -1,9 +1,9 @@
 package com.example.pizzeria.config;
 
 public enum DinerArrivalFrequency {
-    High(1),
-    Medium(5),
-    Low(10);
+    High(10),
+    Medium(25),
+    Low(50);
 
     public final int value;
 
